@@ -43,3 +43,21 @@
 ### Technical Decisions
 - **Middleware:** Used Zustand's `persist` middleware specifically for metrics to balance performance with user experience.
 - **Speed Multipliers:** Implemented a discrete speed state (1x, 2x, 5x) to prepare for batched physics stepping in Stage 5.
+
+## [2026-05-13] - Stage 5: Physics Bridge (Implementation & Environment Fix)
+### Added
+- **Core Engine:** `frontend/src/engine/CreatureBuilder.ts` implemented with BFS-based limb instantiation.
+- **Physics-to-Visuals:** Established a `PIXELS_PER_METER` constant (30) to bridge Box2D coordinates with HTML5 Canvas rendering.
+
+### Technical Decisions
+- **Environment:** Updated `tsconfig.json` with `skipLibCheck: true` to suppress deprecation warnings originating from the `planck` library's internal configuration.
+- **Recursive BFS:** Implemented a parent-first construction order to ensure all `RevoluteJoint` anchors are physically valid at the moment of creation.
+
+## [2026-05-13] - Stage 6: Neural Engine & TS Configuration
+### Added
+- **Neural Engine:** `frontend/src/engine/NeuralNetwork.ts` implemented with support for forward-pass evaluation and recurrent connections.
+- **Activations:** Integrated Tanh, ReLU, and Sigmoid activation functions as per PRD §2.1.1.
+
+### Technical Decisions
+- **TS Fix:** Applied `skipLibCheck: true` and `ignoreDeprecations: "6.0"` to the frontend `tsconfig.json` to bypass legacy configuration errors within the `planck` node_module.
+- **Stateful Activations:** Implemented a `previousActivations` cache within the engine to facilitate recurrent neural topologies, allowing for emergent rhythmic behavior (oscillators).
