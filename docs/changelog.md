@@ -24,3 +24,12 @@
 - **Sensor Mapping:** Assigned fixed `gene_id` values (1-3) to the innate sensors (Body Angle, Ground Contact, Oscillator) to simplify the initial frontend sensor-reading logic.
 - **UUIDs:** Integrated `uuid.uuid4()` for `genome_id` to ensure unique tracking across the lineage history.
 - **Physical Boundaries:** Applied strict `random.uniform` ranges to the torso morphology to stay within the PRD §3.8 performance budget.
+
+## [2026-05-13] - Stage 3: Frontend API Bridge
+### Added
+- **Service:** `frontend/src/services/api.ts` implemented using the Fetch API.
+- **Integration:** Integrated TypeScript interfaces to ensure the frontend strictly validates the "DNA" payloads received from the Python backend.
+- **Environment Config:** Set up `NEXT_PUBLIC_API_URL` support for seamless switching between local development and production.
+
+### Technical Decisions
+- **Fetch vs Axios:** Opted for native `fetch` to keep the bundle size minimal and leverage Next.js 14's built-in caching and revalidation capabilities where applicable.
