@@ -33,3 +33,13 @@
 
 ### Technical Decisions
 - **Fetch vs Axios:** Opted for native `fetch` to keep the bundle size minimal and leverage Next.js 14's built-in caching and revalidation capabilities where applicable.
+
+## [2026-05-13] - Stage 4: Global State Management (Zustand)
+### Added
+- **Store:** `frontend/src/store/simulationStore.ts` implemented using Zustand.
+- **State:** Centralized management for physics constants (Gravity/Friction), Population DNA, and UI playback state.
+- **Persistence:** Configured local storage persistence for the `allTimeRecord` to preserve progress across sessions.
+
+### Technical Decisions
+- **Middleware:** Used Zustand's `persist` middleware specifically for metrics to balance performance with user experience.
+- **Speed Multipliers:** Implemented a discrete speed state (1x, 2x, 5x) to prepare for batched physics stepping in Stage 5.
