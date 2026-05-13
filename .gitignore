@@ -1,0 +1,10 @@
+# Node
+node_modules/
+.next/
+
+# Python / Conda
+__pycache__/
+*.pyc
+
+# Environment
+.env
