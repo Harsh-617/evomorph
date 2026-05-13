@@ -67,6 +67,11 @@ class ConnectionGene(BaseModel):
     weight: Optional[float] = Field(None, ge=-3.0, le=3.0)
 
 
+class NeuralNetwork(BaseModel):
+    weights: List[List[float]] = Field(default_factory=list)
+    biases: List[float] = Field(default_factory=list)
+
+
 class Genome(BaseModel):
     genome_id: str
     species_id: int
@@ -74,3 +79,4 @@ class Genome(BaseModel):
     fitness: float = Field(default=0.0, ge=0.0)
     node_genes: List[NodeGene] = Field(default_factory=list)
     connection_genes: List[ConnectionGene] = Field(default_factory=list)
+    brain: NeuralNetwork = Field(default_factory=NeuralNetwork)

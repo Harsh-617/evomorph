@@ -13,3 +13,14 @@
 ### Technical Decisions
 - **Serialization:** Chose string enums over integers to ensure the JSON payloads are human-readable and match the PRD's serialization examples.
 - **Validation:** Implemented `math.pi` constraints in Python to prevent the generation of physically impossible joint limits before they ever reach the browser physics engine.
+
+## [2026-05-13] - Stage 2: The Genesis Engine (Implementation)
+### Added
+- **Module:** `backend/routers/evolution.py` initialized to handle population life cycles.
+- **Endpoint:** `GET /api/genesis` implemented to generate the starting population.
+- **Logic:** `generate_minimal_genome()` helper function created to enforce the "Initial Creature" constraints (Minimalist Gen 0) defined in PRD §2.5.
+
+### Technical Decisions
+- **Sensor Mapping:** Assigned fixed `gene_id` values (1-3) to the innate sensors (Body Angle, Ground Contact, Oscillator) to simplify the initial frontend sensor-reading logic.
+- **UUIDs:** Integrated `uuid.uuid4()` for `genome_id` to ensure unique tracking across the lineage history.
+- **Physical Boundaries:** Applied strict `random.uniform` ranges to the torso morphology to stay within the PRD §3.8 performance budget.
