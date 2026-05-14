@@ -7,13 +7,13 @@ POPULATION_SIZE: int = 20
 GENERATION_TIME: float = 15.0
 
 # NEAT speciation
-SPECIES_THRESHOLD: float = 3.0
+SPECIES_THRESHOLD: float = 1.5  # lower threshold = more species = more diversity
 C1: float = 1.0   # Excess gene coefficient
 C2: float = 1.0   # Disjoint gene coefficient
 C3: float = 0.4   # Weight difference coefficient
 
 # Selection
-SURVIVAL_RATE: float = 0.80
+SURVIVAL_RATE: float = 0.60  # was 0.80 — cull more aggressively to create selection pressure
 CROSSOVER_RATE: float = 0.75
 ELITISM_THRESHOLD: int = 5
 

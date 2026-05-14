@@ -11,7 +11,7 @@ export function calculateFitness(stats: {
   const maxX = stats.maxX;
 
   const uprightFraction = stats.timeUpright / GENERATION_TIME;
-  const uprightBonus = uprightFraction * 50;
+  const uprightBonus = uprightFraction * 10;  // reduce to 10
 
   const maxPossibleTorque = stats.numJoints * stats.maxTorque * GENERATION_TIME * 60;
   const energyRatio = stats.cumulativeTorque / Math.max(maxPossibleTorque, 1);

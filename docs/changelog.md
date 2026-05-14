@@ -396,3 +396,21 @@
 - Creatures now visibly move and flail from Generation 1
 - Camera correctly tracks the creature that has traveled furthest
 - Evolution has meaningful fitness signal to select toward locomotion
+
+## [2026-05-14] - Stage 26: Evolution Tuning
+
+### Fixed
+- **`FitnessCalculator.ts`** — Upright bonus reduced from 50 to 10 points.
+  Distance is now the dominant fitness signal. Creatures can no longer
+  score ~50 by standing still
+- **`config.py`** — SPECIES_THRESHOLD lowered from 3.0 to 1.5. More
+  species form, protecting morphological innovation from being eliminated
+  by the dominant body plan
+- **`config.py`** — SURVIVAL_RATE reduced from 0.80 to 0.60. More
+  aggressive culling creates stronger selection pressure toward
+  forward locomotion
+
+### Impact
+- Population should stop premature convergence on the L-shape body plan
+- Best fitness should climb past 51 as distance becomes the primary reward
+- Multiple species should appear in the leaderboard species colors
