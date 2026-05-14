@@ -131,3 +131,39 @@
   the exact frontend→backend handshake
 - **Selection pressure via species_id:** since fresh IDs are enforced,
   champion survival is verified through species_id persistence (PRD §3.5 elitism)
+
+  ## [2026-05-14] - Stage 12: NEAT Evolution Engine + /api/evolve Endpoint
+
+### Added
+- **`backend/neat/innovation.py`** — InnovationTracker with monotonic counter,
+  per-generation history reset, and split-node tracking so parallel mutations
+  on the same synapse get consistent hidden node IDs
+- **`backend/neat/species.py`** — compatibility_distance (NEAT δ formula with
+  C1/C2/C3 from config), Species class with representative election.
+  Species counter lives on Population to preserve species_id=0 continuity
+  across genesis resets
+- **`backend/neat/reproduction.py`** — All 9 mutation operators (mutate_weights,
+  add_synapse, add_node_split, toggle_enable, add_limb, remove_limb,
+  mutate_segment, mutate_joint, add_sensor) + crossover aligned by
+  innovation_id. All values clamped before Pydantic validation
+- **`backend/neat/population.py`** — Population orchestrator implementing the
+  full 9-step PRD §3.4-3.5 loop: fitness assignment → speciation → adjusted
+  fitness → 20% cull → proportional allocation → elitism → crossover/asexual
+  → re-speciation → innovation reset. Padding loop guarantees exactly 20
+  genomes returned
+- **`backend/routers/evolution.py`** — POST /api/evolve endpoint with
+  module-level Population instance persisting species history across requests
+- **`backend/schemas/evolution.py`** — EvolveRequest, EvolveResponse,
+  CreatureResult, EnvironmentConfig, SpeciesInfo, GenerationStats schemas
+- **`backend/neat/config.py`** — All 24 NEAT constants from PRD §3.8
+
+### Test Results
+- 22/22 tests passing (12 genesis + 10 evolve)
+
+### Technical Decisions
+- **Idempotent generation field:** returned generation = request.generation + 1,
+  not population.generation — makes the endpoint safe against duplicate calls
+- **Module-level Population:** single global instance persists species history
+  between HTTP requests without a database
+- **Padding loop:** guarantees population size invariant of exactly 20 genomes
+  even when proportional allocation rounds unevenly
