@@ -135,7 +135,7 @@ def evolve(request: EvolveRequest) -> EvolveResponse:
         )
 
     # Compute generation stats
-    fitnesses = [g.get("fitness", 0.0) for g in new_dicts]
+    fitnesses = [s.fitness for s in request.scores]
     limb_counts = [
         max(0, sum(1 for n in g.get("node_genes", []) if n.get("type") == "BODY_SEGMENT") - 1)
         for g in new_dicts
