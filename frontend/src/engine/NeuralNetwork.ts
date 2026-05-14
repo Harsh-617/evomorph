@@ -8,19 +8,11 @@ function applyActivation(fn: ActivationType | undefined, x: number): number {
   }
 }
 
-/**
- * Runs one tick of the creature's neural network.
- *
- * @param genome         The creature genome (node + connection genes).
- * @param sensorValues   INPUT node activations for this tick: gene_id → value.
- * @param prevActivations  Activations from the previous tick, used for recurrent synapses.
- * @returns Map of OUTPUT node gene_id → activation value (motor commands).
- */
 export function evaluateNetwork(
   genome: Genome,
   sensorValues: Map<number, number>,
   prevActivations: Map<number, number> = new Map(),
-): Map<number, number> {
+): { outputs: Map<number, number>; allActivations: Map<number, number> } {
   // Index all non-body neurons
   const neurons = new Map(
     genome.node_genes
@@ -88,5 +80,5 @@ export function evaluateNetwork(
       outputs.set(gene.gene_id, activations.get(gene.gene_id) ?? 0);
     }
   }
-  return outputs;
+  return { outputs, allActivations: activations };
 }

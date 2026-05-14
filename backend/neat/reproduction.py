@@ -269,6 +269,13 @@ def _add_limb(genome: dict, tracker: InnovationTracker) -> None:
             _make_synapse(syn_iid, src["gene_id"], motor_id, round(random.uniform(*config.SYNAPSE_WEIGHT_RANGE), 4))
         )
 
+    # Wire proprioceptive sensor → motor so the new limb has self-feedback
+    prop_iid = tracker.get_innovation(sensor_id, motor_id, "SYNAPSE")
+    genome["connection_genes"].append(
+        _make_synapse(prop_iid, sensor_id, motor_id,
+                      round(random.uniform(*config.SYNAPSE_WEIGHT_RANGE), 4))
+    )
+
 
 def _remove_limb(genome: dict) -> None:
     """Remove a random leaf BODY_SEGMENT and all its associated genes."""

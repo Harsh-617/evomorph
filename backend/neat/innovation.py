@@ -11,7 +11,7 @@ class InnovationTracker:
     """
 
     def __init__(self) -> None:
-        self.counter: int = 0
+        self.counter: int = 40
         # (in_node, out_node, conn_type) | ("NODE_SPLIT", in_node, out_node) → id
         self.history: dict = {}
 

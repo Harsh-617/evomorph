@@ -11,13 +11,14 @@ export function calculateFitness(stats: {
   const maxX = stats.maxX;
 
   const uprightFraction = stats.timeUpright / GENERATION_TIME;
-  const uprightBonus = uprightFraction * 10;  // reduce to 10
+  const uprightBonus = uprightFraction * 25;
 
   const maxPossibleTorque = stats.numJoints * stats.maxTorque * GENERATION_TIME * 60;
   const energyRatio = stats.cumulativeTorque / Math.max(maxPossibleTorque, 1);
   const energyPenalty = energyRatio * 30;
 
-  const headTouchPenalty = stats.headGroundTime > 0.5 ? maxX * 0.9 : 0;
+  const headTouchFraction = Math.min(stats.headGroundTime / GENERATION_TIME, 1.0);
+  const headTouchPenalty = headTouchFraction * 5.0;
 
   return Math.max(0, maxX + uprightBonus - energyPenalty - headTouchPenalty);
 }

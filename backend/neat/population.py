@@ -24,6 +24,7 @@ class Population:
         self.innovation_tracker: InnovationTracker = InnovationTracker()
         self.generation: int = 0
         self._next_species_id: int = 0  # starts at 0 so genesis species_id=0 is preserved
+        self._last_scored_species: list = []
 
     # ------------------------------------------------------------------
     # Speciation
@@ -51,10 +52,9 @@ class Population:
         # Prune extinct species
         self.species = [sp for sp in self.species if sp.members]
 
-        # Elect new representatives and age surviving species
+        # Elect new representatives
         for sp in self.species:
             sp.assign_representative()
-            sp.age += 1
 
     def _new_species(self, representative: dict) -> Species:
         sp = Species(self._next_species_id, representative)
@@ -94,17 +94,32 @@ class Population:
         # 2. Speciate
         self.speciate(genomes)
 
+        # Age surviving species exactly once per generation
+        for sp in self.species:
+            sp.age += 1
+
         # 3. Adjusted fitness
         for sp in self.species:
             size = max(len(sp.members), 1)
             for g in sp.members:
                 g[_ADJUSTED] = g["fitness"] / size
 
+        # Snapshot scored species before culling overwrites members
+        self._last_scored_species = [
+            {"species_id": sp.species_id, "members": list(sp.members)}
+            for sp in self.species if sp.members
+        ]
+
         # 4. Kill bottom 20 % within each species (keep top 80 %)
         for sp in self.species:
             sp.members.sort(key=lambda g: g[_ADJUSTED])
             kill = max(0, int(len(sp.members) * (1.0 - config.SURVIVAL_RATE)))
             sp.members = sp.members[kill:]
+
+        # 4b. Elect representatives from surviving members (post-cull champions)
+        for sp in self.species:
+            if sp.members:
+                sp.representative = max(sp.members, key=lambda g: g.get("fitness", 0.0))
 
         # 5. Allocate offspring
         species_avgs = [

@@ -95,6 +95,5 @@ class Species:
         self.color_hue: float = (species_id * 137.508) % 360.0
 
     def assign_representative(self) -> None:
-        """Elect a random member as the new representative for the next generation."""
         if self.members:
-            self.representative = random.choice(self.members)
+            self.representative = max(self.members, key=lambda g: g.get("fitness", 0.0))

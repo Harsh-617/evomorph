@@ -193,7 +193,7 @@ export class SimulationEngine {
       }
 
       // ── 2. Think ──────────────────────────────────────────────────────────
-      const outputs = evaluateNetwork(creature.genome, sensors, creature.prevActivations);
+      const { outputs, allActivations } = evaluateNetwork(creature.genome, sensors, creature.prevActivations);
 
       // ── 3. Actuate ────────────────────────────────────────────────────────
       let tickTorque = 0;
@@ -209,7 +209,7 @@ export class SimulationEngine {
       }
 
       // Carry all activations forward so recurrent synapses have values next tick
-      creature.prevActivations = new Map([...sensors, ...outputs]);
+      creature.prevActivations = allActivations;
 
       // ── 4. Fitness accumulators ───────────────────────────────────────────
       if (torsoPos.x > creature.maxX) creature.maxX = torsoPos.x;

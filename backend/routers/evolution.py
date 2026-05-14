@@ -39,7 +39,7 @@ _current_genomes: List[dict] = []
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _make_minimal_genome() -> Genome:
+def _make_minimal_genome(i: int = 0) -> Genome:
     torso = NodeGene(
         gene_id=0,
         type=NodeType.BODY_SEGMENT,
@@ -63,7 +63,7 @@ def _make_minimal_genome() -> Genome:
     )
     motor = NodeGene(gene_id=5, type=NodeType.OUTPUT, attached_segment_id=4)
     joint_gene = ConnectionGene(
-        innovation_id=0,
+        innovation_id=i,
         in_node=0,
         out_node=4,
         conn_type=ConnectionType.JOINT,
@@ -75,7 +75,7 @@ def _make_minimal_genome() -> Genome:
     )
     src_id = random.choice([1, 2, 3])
     synapse_gene = ConnectionGene(
-        innovation_id=1,
+        innovation_id=i + 20,
         in_node=src_id,
         out_node=5,
         conn_type=ConnectionType.SYNAPSE,
@@ -116,7 +116,7 @@ def genesis() -> List[Genome]:
     """Initialize a fresh population of 20 minimal genomes (Generation 0)."""
     global _population, _current_genomes
 
-    genomes = [_make_minimal_genome() for _ in range(_POPULATION_SIZE)]
+    genomes = [_make_minimal_genome(i) for i in range(_POPULATION_SIZE)]
     _population = Population()
     _current_genomes = [_genome_to_dict(g) for g in genomes]
     return genomes
@@ -147,21 +147,25 @@ def evolve(request: EvolveRequest) -> EvolveResponse:
         d["generation"] = new_generation
     _current_genomes = new_dicts
 
-    # Build species_info
+    # Build species_info from pre-respeciation snapshot so counts/fitness reflect scored gen
+    species_hue_map = {sp.species_id: sp.color_hue for sp in _population.species}
+    species_age_map = {sp.species_id: sp.age for sp in _population.species}
     species_info: list[SpeciesInfo] = []
-    for sp in _population.species:
-        if not sp.members:
+    for entry in _population._last_scored_species:
+        members = entry["members"]
+        sp_id = entry["species_id"]
+        if not members:
             continue
-        champion = max(sp.members, key=lambda g: g.get("fitness", 0.0))
-        avg_fit = sum(g.get("fitness", 0.0) for g in sp.members) / len(sp.members)
+        champion = max(members, key=lambda g: g.get("fitness", 0.0))
+        avg_fit = sum(g.get("fitness", 0.0) for g in members) / len(members)
         species_info.append(
             SpeciesInfo(
-                species_id=sp.species_id,
-                color_hue=round(sp.color_hue, 2),
-                member_count=len(sp.members),
+                species_id=sp_id,
+                color_hue=round(species_hue_map.get(sp_id, (sp_id * 137.508) % 360.0), 2),
+                member_count=len(members),
                 avg_fitness=round(avg_fit, 4),
                 champion_genome_id=champion.get("genome_id", ""),
-                age=sp.age,
+                age=species_age_map.get(sp_id, 0),
             )
         )
 

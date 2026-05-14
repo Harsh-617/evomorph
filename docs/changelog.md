@@ -414,3 +414,35 @@
 - Population should stop premature convergence on the L-shape body plan
 - Best fitness should climb past 51 as distance becomes the primary reward
 - Multiple species should appear in the leaderboard species colors
+
+## [2026-05-14] - Stage 27: Full System Audit + 8 Bug Fixes
+
+### Fixed (from full pipeline audit)
+- **Bug 1 `FitnessCalculator.ts`** — CRITICAL: Replaced 90% proportional
+  head-touch penalty with flat `headTouchFraction * 5.0`. Previous penalty
+  was erasing 90% of displacement for any flat-torso creature, causing
+  fitness plateau at ~13m. Upright bonus restored to 25
+- **Bug 2 `population.py` + `evolution.py`** — HIGH: species_info now built
+  from `_last_scored_species` snapshot taken after adjusted fitness but
+  before culling. Previously built from offspring (all fitness=0.0)
+- **Bug 3 `NeuralNetwork.ts` + `SimulationLoop.ts`** — HIGH: evaluateNetwork
+  now returns `{outputs, allActivations}`. prevActivations stores all node
+  activations including hidden nodes. Recurrent connections through hidden
+  layers now work correctly
+- **Bug 4 `population.py`** — MEDIUM: sp.age no longer incremented inside
+  speciate(). Now incremented exactly once per generation in evolve()
+- **Bug 5 `evolution.py` + `innovation.py`** — MEDIUM: Genesis innovation
+  IDs now unique per genome (joint=i, synapse=i+20). InnovationTracker
+  starts at 40 to avoid collision with genesis IDs. Previously all 20
+  genomes shared innovation_id=1 for their synapse
+- **Bug 6 `species.py`** — MEDIUM: assign_representative now selects
+  champion (highest fitness) not random member. Eliminates species
+  flickering caused by atypical boundary representatives
+- **Bug 7 `population.py`** — MEDIUM: Representatives elected from
+  post-cull survivors before offspring production. Previously used
+  pre-cull representatives that may have been eliminated
+- **Bug 9 `reproduction.py`** — LOW: New limb's proprioceptive joint-angle
+  sensor now immediately wired to its motor. Previously dangling
+
+### Test Results
+- 22/22 passing after all fixes
