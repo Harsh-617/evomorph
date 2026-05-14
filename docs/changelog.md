@@ -167,3 +167,23 @@
   between HTTP requests without a database
 - **Padding loop:** guarantees population size invariant of exactly 20 genomes
   even when proportional allocation rounds unevenly
+
+  ## [2026-05-14] - Stage 13: Camera Follow System
+
+### Added
+- **Camera follow:** `PhysicsArena.tsx` render loop now tracks the leader
+  (creature with highest torso X) every frame. Leader sits 25% from left
+  edge giving visual space ahead per PRD §6.2
+- **Wide ground line:** Ground spans `cameraX - 200` to `cameraX + W + 200`
+  so it always fills the screen regardless of camera position
+- **Leader highlight:** Leader creature gets a `#3b82f6` 2px stroke to
+  distinguish it from the rest of the population
+
+### Technical Decisions
+- **Bounding-box rectangle approach:** replaced vertex-walk polygon with
+  min/max scan over planck vertices to get exact pixel dimensions matching
+  the genome's specified width/height
+- **Reference equality for leader:** leader identity tracked by object
+  reference not ID to avoid per-frame string lookups
+- **Y-axis flip:** `-y * PIXELS_PER_METER` corrects planck Y-up to canvas
+  Y-down coordinate system

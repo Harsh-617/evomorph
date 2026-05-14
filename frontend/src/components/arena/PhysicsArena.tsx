@@ -66,28 +66,44 @@ export default function PhysicsArena() {
         }
       }
 
-      // Camera: world origin (ground level) sits 75% down the canvas.
-      const groundY = H * 0.75;
-      ctx.save();
-      ctx.translate(W / 2, groundY);
-      // After this translate: screenX = physicsX * PPM, screenY = -physicsY * PPM
+      // §6.2 Camera-follow: find the creature whose torso (gene_id === 0) is furthest right.
+      const physicsCreatures = engineRef.current.getPhysicsCreatures();
+      let leaderX = 0;
+      let leaderCreature: (typeof physicsCreatures)[0] | null = null;
+      for (const creature of physicsCreatures) {
+        const torso = creature.bodies.get(0);
+        if (torso) {
+          const x = torso.getPosition().x;
+          if (x > leaderX) {
+            leaderX = x;
+            leaderCreature = creature;
+          }
+        }
+      }
 
-      // Ground line
+      // Keep leader 25% from left edge — gives visual space ahead.
+      const cameraX = leaderX * PIXELS_PER_METER - W * 0.25;
+
+      ctx.save();
+      ctx.translate(-cameraX, H * 0.75);
+
+      // Ground must always fill the screen as camera moves.
       ctx.beginPath();
-      ctx.moveTo(-W / 2, 0);
-      ctx.lineTo(W / 2, 0);
-      ctx.strokeStyle = '#4ade80';
+      ctx.moveTo(cameraX - 200, 0);
+      ctx.lineTo(cameraX + W + 200, 0);
+      ctx.strokeStyle = '#22c55e';
       ctx.lineWidth = 2;
       ctx.stroke();
 
       // Creatures
-      for (const creature of engineRef.current.getPhysicsCreatures()) {
+      for (const creature of physicsCreatures) {
+        const isLeader = creature === leaderCreature;
+
         for (const [, body] of creature.bodies) {
           const pos = body.getPosition();
           const angle = body.getAngle();
 
           ctx.save();
-          // Physics Y is up; canvas Y is down — flip both position and rotation.
           ctx.translate(pos.x * PIXELS_PER_METER, -pos.y * PIXELS_PER_METER);
           ctx.rotate(-angle);
 
@@ -97,23 +113,28 @@ export default function PhysicsArena() {
             if (shape.getType() === 'polygon') {
               const verts = (shape as PlanckPolygon).m_vertices;
               if (verts?.length) {
-                ctx.beginPath();
-                ctx.moveTo(
-                  verts[0].x * PIXELS_PER_METER,
-                  -verts[0].y * PIXELS_PER_METER,
-                );
-                for (let i = 1; i < verts.length; i++) {
-                  ctx.lineTo(
-                    verts[i].x * PIXELS_PER_METER,
-                    -verts[i].y * PIXELS_PER_METER,
-                  );
+                // Derive pixel dimensions from local polygon vertices (stored in planck metres).
+                let minVx = Infinity, maxVx = -Infinity;
+                let minVy = Infinity, maxVy = -Infinity;
+                for (const v of verts) {
+                  if (v.x < minVx) minVx = v.x;
+                  if (v.x > maxVx) maxVx = v.x;
+                  if (v.y < minVy) minVy = v.y;
+                  if (v.y > maxVy) maxVy = v.y;
                 }
-                ctx.closePath();
-                ctx.fillStyle = 'rgba(34, 211, 238, 0.5)';
-                ctx.strokeStyle = 'rgba(34, 211, 238, 0.9)';
-                ctx.lineWidth = 1;
+                const w = (maxVx - minVx) * PIXELS_PER_METER;
+                const h = (maxVy - minVy) * PIXELS_PER_METER;
+
+                ctx.beginPath();
+                ctx.rect(-w / 2, -h / 2, w, h);
+                ctx.fillStyle = 'rgba(34, 211, 238, 0.6)';
                 ctx.fill();
-                ctx.stroke();
+
+                if (isLeader) {
+                  ctx.strokeStyle = '#3b82f6';
+                  ctx.lineWidth = 2;
+                  ctx.stroke();
+                }
               }
             }
           }
