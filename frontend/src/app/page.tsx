@@ -5,7 +5,8 @@ import { fetchGenesis, evolvePopulation } from "@/services/api";
 import { useSimulationStore } from "@/store/simulationStore";
 import PhysicsArena from "@/components/arena/PhysicsArena";
 import GodModePanel from "@/components/godmode/GodModePanel";
-import { CreatureResult } from "@/types/genome";
+import NeuralInspector from "@/components/inspector/NeuralInspector";
+import { CreatureResult, Genome } from "@/types/genome";
 import { SimulationEngine } from "@/engine/SimulationLoop";
 
 export default function Home() {
@@ -24,6 +25,10 @@ export default function Home() {
 
   const [loading, setLoading] = useState(true);
   const [timer, setTimer] = useState(15.0);
+  const [inspectorData, setInspectorData] = useState<{
+    genome: Genome;
+    activations: Map<number, number>;
+  } | null>(null);
   const engineRef = useRef<SimulationEngine | null>(null);
   const generationRunning = useRef(false);
 
@@ -125,9 +130,16 @@ export default function Home() {
             onEngineReady={(engine) => {
               engineRef.current = engine;
             }}
+            onActivationsUpdate={(genome, activations) =>
+              setInspectorData({ genome, activations })
+            }
           />
         </div>
         <aside className="w-80 flex flex-col gap-4 p-4 bg-slate-900 border-l border-slate-700 overflow-y-auto">
+          <NeuralInspector
+            genome={inspectorData?.genome ?? null}
+            activations={inspectorData?.activations ?? new Map()}
+          />
           <GodModePanel />
         </aside>
       </main>

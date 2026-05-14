@@ -204,6 +204,25 @@ export class SimulationEngine {
     return this.creatures.map((c) => c.physics);
   }
 
+  private getLeaderCreature(): CreatureState | null {
+    let leader: CreatureState | null = null;
+    let best = -Infinity;
+    for (const c of this.creatures) {
+      const displacement = c.maxX - c.startX;
+      if (displacement > best) { best = displacement; leader = c; }
+    }
+    return leader;
+  }
+
+  getLeaderActivations(): Map<number, number> {
+    const leader = this.getLeaderCreature();
+    return leader ? new Map(leader.prevActivations) : new Map();
+  }
+
+  getLeaderGenome(): Genome | null {
+    return this.getLeaderCreature()?.genome ?? null;
+  }
+
   getResults(): CreatureResult[] {
     return this.creatures.map((creature) => {
       const torso = creature.physics.bodies.get(0);

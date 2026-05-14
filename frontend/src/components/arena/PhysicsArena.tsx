@@ -5,6 +5,7 @@ import type * as planck from 'planck';
 import { SimulationEngine } from '@/engine/SimulationLoop';
 import { PIXELS_PER_METER } from '@/engine/CreatureBuilder';
 import { useSimulationStore } from '@/store/simulationStore';
+import { Genome } from '@/types/genome';
 
 // planck's PolygonShape stores local vertices here, but the type is internal
 interface PlanckPolygon extends planck.Shape {
@@ -13,14 +14,17 @@ interface PlanckPolygon extends planck.Shape {
 
 interface PhysicsArenaProps {
   onEngineReady?: (engine: SimulationEngine) => void;
+  onActivationsUpdate?: (genome: Genome, activations: Map<number, number>) => void;
 }
 
-export default function PhysicsArena({ onEngineReady }: PhysicsArenaProps) {
+export default function PhysicsArena({ onEngineReady, onActivationsUpdate }: PhysicsArenaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<SimulationEngine | null>(null);
   const rafRef = useRef<number>(0);
   const isPlayingRef = useRef(false);
   const speedRef = useRef<1 | 2 | 5>(1);
+  const onActivationsUpdateRef = useRef(onActivationsUpdate);
+  const frameCountRef = useRef(0);
 
   const { population, gravity, friction, isPlaying, simulationSpeed } =
     useSimulationStore();
@@ -29,6 +33,7 @@ export default function PhysicsArena({ onEngineReady }: PhysicsArenaProps) {
   // needing to restart (which would reset the engine).
   useEffect(() => { isPlayingRef.current = isPlaying; }, [isPlaying]);
   useEffect(() => { speedRef.current = simulationSpeed; }, [simulationSpeed]);
+  useEffect(() => { onActivationsUpdateRef.current = onActivationsUpdate; }, [onActivationsUpdate]);
 
   // Re-create the engine and restart the render loop when the population or
   // physics parameters change.
@@ -68,6 +73,14 @@ export default function PhysicsArena({ onEngineReady }: PhysicsArenaProps) {
         const n = speedRef.current;
         for (let i = 0; i < n; i++) {
           engineRef.current.tick(1 / 60);
+        }
+      }
+
+      frameCountRef.current += 1;
+      if (frameCountRef.current % 10 === 0 && onActivationsUpdateRef.current) {
+        const genome = engineRef.current.getLeaderGenome();
+        if (genome) {
+          onActivationsUpdateRef.current(genome, engineRef.current.getLeaderActivations());
         }
       }
 

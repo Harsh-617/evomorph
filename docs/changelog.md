@@ -286,3 +286,27 @@
   This ensures fair fitness comparison within a generation per PRD §5.1
 - **Store-driven physics:** PhysicsArena already reads gravity/friction
   from Zustand store so engine re-creation on slider change was implicit
+
+  ## [2026-05-14] - Stage 20: Neural Inspector
+
+### Added
+- **`NeuralInspector.tsx`** — Live SVG brain visualization per PRD §6.3:
+  - `NetworkGraph` — INPUT/HIDDEN/OUTPUT column layout, edges colored
+    blue/red by weight sign, node opacity pulses with activation value
+  - `BodyDiagram` — BFS tree layout of body segments and joints,
+    proportional to genome width/height values
+  - `CreatureStats` — limb count, synapse count, species ID, generation
+- **`SimulationLoop.ts`** — Added `getLeaderActivations()` and
+  `getLeaderGenome()` exposing the highest-displacement creature's
+  neural state each tick
+- **`PhysicsArena.tsx`** — `onActivationsUpdate` prop with 10-frame
+  throttle (~6 FPS) to feed live activations to inspector without
+  impacting physics performance
+- **`page.tsx`** — `inspectorData` state wired between PhysicsArena
+  and NeuralInspector via `onActivationsUpdate` callback
+
+### Technical Decisions
+- **6 FPS throttle:** Inspector updates decoupled from 60 FPS physics
+  loop. Visual neuron pulsing doesn't need frame-perfect accuracy
+- **Ref-based callback:** `onActivationsUpdateRef` prevents stale
+  closure captures without restarting the rAF loop on re-renders
