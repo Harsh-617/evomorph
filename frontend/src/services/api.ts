@@ -32,7 +32,15 @@ export async function evolvePopulation(
     const res = await fetch(`${BASE_URL}/api/evolve`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ generation, scores }),
+      body: JSON.stringify({
+        generation,
+        scores,
+        environment: {
+          gravity: 1.0,
+          friction: 0.6,
+          terrain: "flat"
+        }
+      }),
     });
     if (!res.ok) {
       throw new Error(`POST /api/evolve failed with status ${res.status}`);

@@ -168,8 +168,10 @@ export class SimulationEngine {
 
       if (torsoPos.y < GROUND_THRESHOLD) {
         creature.headGroundTime += deltaTime;
+        creature.headGroundTime = Math.min(creature.headGroundTime, 15.0);
       } else {
         creature.timeUpright += deltaTime;
+        creature.timeUpright = Math.min(creature.timeUpright, 15.0);
       }
 
       creature.cumulativeTorque += tickTorque;
@@ -204,14 +206,14 @@ export class SimulationEngine {
       return {
         genome_id: creature.genome.genome_id,
         fitness: 0, // computed by the Python backend from the other fields
-        max_x_position: creature.maxX * PIXELS_PER_METER,
+        max_x_position: creature.maxX,
         time_upright: creature.timeUpright,
         cumulative_torque: creature.cumulativeTorque,
         head_ground_time: creature.headGroundTime,
         num_joints: creature.numJoints,
         max_torque: creature.maxTorque,
-        final_x: finalPos.x * PIXELS_PER_METER,
-        final_y: finalPos.y * PIXELS_PER_METER,
+        final_x: finalPos.x,
+        final_y: finalPos.y,
         alive: creature.alive,
       };
     });

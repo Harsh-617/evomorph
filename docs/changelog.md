@@ -211,3 +211,16 @@
   prevent re-renders from tearing down the physics world mid-simulation
 - **getResults() fallback:** if engine not ready, sends zero-fitness
   scores so the backend still evolves rather than crashing
+
+  ## [2026-05-14] - Stage 15: Evolution Loop Bug Fixes
+
+### Fixed
+- **`api.ts`** — POST /api/evolve body now includes required `environment`
+  field (gravity: 1.0, friction: 0.6, terrain: "flat"). Was causing 422
+  Unprocessable Entity rejection from backend
+- **`SimulationLoop.ts`** — `head_ground_time` and `time_upright` accumulators
+  now clamped to 15.0 seconds maximum. Were accumulating unbounded across
+  ticks producing values of 101+ seconds
+- **`SimulationLoop.ts`** — `getResults()` now returns `max_x_position`,
+  `final_x`, `final_y` in raw planck metres instead of pixels. Backend
+  fitness function expects metres not pixels
