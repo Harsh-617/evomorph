@@ -61,3 +61,12 @@
 ### Technical Decisions
 - **TS Fix:** Applied `skipLibCheck: true` and `ignoreDeprecations: "6.0"` to the frontend `tsconfig.json` to bypass legacy configuration errors within the `planck` node_module.
 - **Stateful Activations:** Implemented a `previousActivations` cache within the engine to facilitate recurrent neural topologies, allowing for emergent rhythmic behavior (oscillators).
+
+## [2026-05-14] - Stage 7: The Master Simulation Loop
+### Added
+- **Core Orchestrator:** `frontend/src/engine/SimulationLoop.ts` implemented to manage the 60 FPS update cycle.
+- **Sense-Think-Act:** Wired the `CreatureBuilder` physics bodies to the `NeuralNetwork` evaluations, completing the closed-loop control system.
+- **Telemetry:** Built real-time tracking for fitness components (max X distance, energy usage, head touches) over the 15-second generation window.
+
+### Technical Decisions
+- **Class-Based Engine:** Opted for a stateful TypeScript Class (`SimulationEngine`) rather than a React Hook to encapsulate the heavy `planck.js` world state and prevent React re-render cycles from interfering with deterministic physics stepping.
