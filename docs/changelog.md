@@ -107,3 +107,27 @@
 - **Module-scoped fixture:** Genesis endpoint called once, response shared across all 12 tests to avoid redundant HTTP round-trips
 - **Private helper `_torso()`:** Locates the BODY_SEGMENT node without repeating filter logic across range tests
 - **Descriptive failure messages:** Every assertion includes `genome_id` and offending value for instant debugging
+
+## [2026-05-14] - Stage 11: TDD for /api/evolve Endpoint
+
+### Added
+- **Tests:** `backend/tests/test_evolve.py` — 10 pytest tests for the `/api/evolve` endpoint
+- **Status:** All 10 tests currently FAILING with 404 (endpoint not yet implemented — intentional TDD)
+
+### Test Coverage
+- HTTP contract: endpoint returns 200
+- Population invariant: always returns exactly 20 genomes
+- Generation counter: offspring have generation == 1
+- ID integrity: offspring get fresh UUIDs, no aliasing, no collisions
+- Response shape: species_info and stats fields present with correct sub-fields
+- Selection pressure: champion's species survives via elitism (PRD §3.5)
+- Physical validity: every offspring has at least one BODY_SEGMENT
+- Robustness: mixed/zero/high fitness scores don't crash the endpoint
+
+### Technical Decisions
+- **Module-scoped fixtures:** genesis_genomes called once, evolve_payload and
+  evolve_response derived from it — no redundant HTTP calls across 10 tests
+- **Real genome IDs in payload:** uses actual IDs from /api/genesis to simulate
+  the exact frontend→backend handshake
+- **Selection pressure via species_id:** since fresh IDs are enforced,
+  champion survival is verified through species_id persistence (PRD §3.5 elitism)
