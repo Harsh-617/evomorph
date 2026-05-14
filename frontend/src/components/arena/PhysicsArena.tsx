@@ -12,6 +12,11 @@ interface PlanckPolygon extends planck.Shape {
   m_vertices: planck.Vec2[];
 }
 
+interface PlanckEdge extends planck.Shape {
+  m_vertex1: planck.Vec2;
+  m_vertex2: planck.Vec2;
+}
+
 interface PhysicsArenaProps {
   onEngineReady?: (engine: SimulationEngine) => void;
   onActivationsUpdate?: (genome: Genome, activations: Map<number, number>) => void;
@@ -26,7 +31,7 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate }: Phy
   const onActivationsUpdateRef = useRef(onActivationsUpdate);
   const frameCountRef = useRef(0);
 
-  const { population, gravity, friction, isPlaying, simulationSpeed } =
+  const { population, gravity, friction, terrain, isPlaying, simulationSpeed } =
     useSimulationStore();
 
   // Keep refs in sync so the rAF loop always sees the latest values without
@@ -45,12 +50,12 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate }: Phy
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    engineRef.current = new SimulationEngine(population, gravity, friction);
+    engineRef.current = new SimulationEngine(population, gravity, friction, terrain);
     onEngineReady?.(engineRef.current);
 
     const syncSize = () => {
-      const w = canvas.offsetWidth;
-      const h = canvas.offsetHeight;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
       if (w > 0) canvas.width = w;
       if (h > 0) canvas.height = h;
     };
@@ -113,6 +118,54 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate }: Phy
       ctx.lineWidth = 2;
       ctx.stroke();
 
+      // Terrain obstacles
+      if (terrain === 'hurdles' || terrain === 'stairs') {
+        for (let body = engineRef.current.world.getBodyList(); body; body = body.getNext()) {
+          if (body.getType() !== 'static') continue;
+          const fixture = body.getFixtureList();
+          if (!fixture) continue;
+          const shape = fixture.getShape();
+          if (shape.getType() !== 'polygon') continue;
+          const verts = (shape as PlanckPolygon).m_vertices;
+          if (!verts?.length) continue;
+          let minVx = Infinity, maxVx = -Infinity, minVy = Infinity, maxVy = -Infinity;
+          for (const v of verts) {
+            if (v.x < minVx) minVx = v.x;
+            if (v.x > maxVx) maxVx = v.x;
+            if (v.y < minVy) minVy = v.y;
+            if (v.y > maxVy) maxVy = v.y;
+          }
+          const bw = (maxVx - minVx) * PIXELS_PER_METER;
+          const bh = (maxVy - minVy) * PIXELS_PER_METER;
+          const pos = body.getPosition();
+          ctx.save();
+          ctx.translate(pos.x * PIXELS_PER_METER, -pos.y * PIXELS_PER_METER);
+          ctx.beginPath();
+          ctx.rect(-bw / 2, -bh / 2, bw, bh);
+          ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      if (terrain === 'hills') {
+        ctx.beginPath();
+        ctx.strokeStyle = '#22c55e';
+        ctx.lineWidth = 2;
+        for (let body = engineRef.current.world.getBodyList(); body; body = body.getNext()) {
+          if (body.getType() !== 'static') continue;
+          const fixture = body.getFixtureList();
+          if (!fixture) continue;
+          const shape = fixture.getShape();
+          if (shape.getType() !== 'edge') continue;
+          const edge = shape as PlanckEdge;
+          if (Math.abs(edge.m_vertex1.x) > 100) continue; // skip main ground
+          ctx.moveTo(edge.m_vertex1.x * PIXELS_PER_METER, -edge.m_vertex1.y * PIXELS_PER_METER);
+          ctx.lineTo(edge.m_vertex2.x * PIXELS_PER_METER, -edge.m_vertex2.y * PIXELS_PER_METER);
+        }
+        ctx.stroke();
+      }
+
       // Creatures
       for (const creature of physicsCreatures) {
         const isLeader = creature === leaderCreature;
@@ -171,12 +224,14 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate }: Phy
       cancelAnimationFrame(rafRef.current);
       ro.disconnect();
     };
-  }, [population, gravity, friction]);
+  }, [population, gravity, friction, terrain]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ width: '100%', height: '100%', display: 'block' }}
-    />
+    <div className="w-full h-full">
+      <canvas
+        ref={canvasRef}
+        style={{ width: '100%', height: '100%', display: 'block' }}
+      />
+    </div>
   );
 }

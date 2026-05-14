@@ -33,7 +33,7 @@ export class SimulationEngine {
   private creatures: CreatureState[] = [];
   private time = 0;
 
-  constructor(genomes: Genome[], gravityMultiplier: number, friction: number) {
+  constructor(genomes: Genome[], gravityMultiplier: number, friction: number, terrain: string = 'flat') {
     this._world = new planck.World(new planck.Vec2(0, -10 * gravityMultiplier));
 
     // Static ground plane extending far in both directions
@@ -42,6 +42,44 @@ export class SimulationEngine {
       new planck.Edge(new planck.Vec2(-10000, 0), new planck.Vec2(10000, 0)),
       { friction },
     );
+
+    if (terrain === 'hurdles') {
+      for (let i = 1; i <= 20; i++) {
+        const hurdleX = 65 + i * 3.33;
+        const hurdleBody = this._world.createBody({ type: 'static', position: planck.Vec2(hurdleX, 0) });
+        hurdleBody.createFixture({
+          shape: planck.Box(0.25, 0.33),
+          friction: friction,
+        });
+      }
+    }
+
+    if (terrain === 'stairs') {
+      for (let i = 0; i < 30; i++) {
+        const stepX = 65 + i * 2.0;
+        const stepY = i * 0.4;
+        const stepBody = this._world.createBody({ type: 'static', position: planck.Vec2(stepX, stepY) });
+        stepBody.createFixture({
+          shape: planck.Box(1.0, 0.25),
+          friction: friction,
+        });
+      }
+    }
+
+    if (terrain === 'hills') {
+      const segments = 100;
+      for (let i = 0; i < segments; i++) {
+        const x1 = i * 0.5;
+        const x2 = (i + 1) * 0.5;
+        const y1 = Math.sin(x1 * 0.3) * 2.0;
+        const y2 = Math.sin(x2 * 0.3) * 2.0;
+        const hillBody = this._world.createBody({ type: 'static' });
+        hillBody.createFixture({
+          shape: planck.Edge(planck.Vec2(x1, y1), planck.Vec2(x2, y2)),
+          friction: friction,
+        });
+      }
+    }
 
     for (let i = 0; i < genomes.length; i++) {
       const genome = genomes[i];

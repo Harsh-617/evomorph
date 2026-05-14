@@ -102,8 +102,8 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex flex-col">
-      <header className="h-16 flex items-center justify-between px-6 bg-slate-800 border-b border-slate-700">
+    <div className="h-screen flex flex-col overflow-hidden">
+      <header className="h-16 flex-shrink-0 flex items-center justify-between px-6 bg-slate-800 border-b border-slate-700">
         <div className="flex items-center gap-6">
           <span className="text-xl font-bold text-white">EvoMorph</span>
           <span className="text-slate-400 text-sm">Gen: {generation}</span>
@@ -124,8 +124,8 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex-grow flex flex-row overflow-hidden">
-        <div className="flex-1">
+      <main className="flex-1 flex flex-row overflow-hidden">
+        <div className="flex-1 overflow-hidden">
           <PhysicsArena
             onEngineReady={(engine) => {
               engineRef.current = engine;
@@ -135,7 +135,7 @@ export default function Home() {
             }
           />
         </div>
-        <aside className="w-80 flex flex-col gap-4 p-4 bg-slate-900 border-l border-slate-700 overflow-y-auto">
+        <aside className="w-80 flex-shrink-0 overflow-y-auto flex flex-col gap-4 p-4 bg-slate-900 border-l border-slate-700">
           <NeuralInspector
             genome={inspectorData?.genome ?? null}
             activations={inspectorData?.activations ?? new Map()}

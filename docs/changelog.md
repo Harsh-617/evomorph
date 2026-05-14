@@ -310,3 +310,32 @@
   loop. Visual neuron pulsing doesn't need frame-perfect accuracy
 - **Ref-based callback:** `onActivationsUpdateRef` prevents stale
   closure captures without restarting the rAF loop on re-renders
+
+  ## [2026-05-14] - Stage 21: Layout Fix + Terrain Physics
+
+### Fixed
+- **`page.tsx`** — Layout now uses `h-screen overflow-hidden` so arena
+  fills full viewport with no scrolling required
+- **`PhysicsArena.tsx`** — ResizeObserver uses `clientWidth/clientHeight`
+  for accurate canvas sizing. Canvas wrapped in `w-full h-full` container
+
+### Added
+- **`SimulationLoop.ts`** — Real terrain obstacle generation per PRD §5.2:
+  - Hurdles: 20 static boxes starting at x=65m past spawn cluster
+  - Stairs: 30 ascending steps starting at x=65m, 0.4m rise per step
+  - Hills: 100 sine-wave edge segments, 2m amplitude
+- **`PhysicsArena.tsx`** — Terrain rendering, slate rectangles for
+  hurdles/stairs, green edges for hills. Engine restarts on terrain change
+
+## [2026-05-14] - Stage 22: Neural Inspector + God Mode Panel
+
+### Added
+- **`NeuralInspector.tsx`** — Live SVG brain visualization with NetworkGraph,
+  BodyDiagram, and CreatureStats. Node opacity pulses with activation value
+- **`GodModePanel.tsx`** — Gravity/friction sliders and terrain selector.
+  Amber indicator when settings differ from defaults
+- **`SimulationLoop.ts`** — `getLeaderActivations()` and `getLeaderGenome()`
+  methods exposing highest-displacement creature's neural state
+- **`PhysicsArena.tsx`** — `onActivationsUpdate` prop with 10-frame throttle
+- **`api.ts`** — `evolvePopulation` accepts real environment parameters
+- **`page.tsx`** — Right sidebar with NeuralInspector above GodModePanel
