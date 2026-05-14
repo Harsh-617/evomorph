@@ -11,7 +11,11 @@ interface PlanckPolygon extends planck.Shape {
   m_vertices: planck.Vec2[];
 }
 
-export default function PhysicsArena() {
+interface PhysicsArenaProps {
+  onEngineReady?: (engine: SimulationEngine) => void;
+}
+
+export default function PhysicsArena({ onEngineReady }: PhysicsArenaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<SimulationEngine | null>(null);
   const rafRef = useRef<number>(0);
@@ -37,6 +41,7 @@ export default function PhysicsArena() {
     if (!ctx) return;
 
     engineRef.current = new SimulationEngine(population, gravity, friction);
+    onEngineReady?.(engineRef.current);
 
     const syncSize = () => {
       const w = canvas.offsetWidth;

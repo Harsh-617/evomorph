@@ -3,8 +3,12 @@ import { Genome, CreatureResult } from "../types/genome";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export interface EvolveResponse {
-  generation: number;
-  population: Genome[];
+  genomes: Genome[];
+  stats: {
+    best_fitness: number;
+    avg_fitness: number;
+    species_count: number;
+  };
 }
 
 export async function fetchGenesis(): Promise<Genome[]> {

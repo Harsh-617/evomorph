@@ -187,3 +187,27 @@
   reference not ID to avoid per-frame string lookups
 - **Y-axis flip:** `-y * PIXELS_PER_METER` corrects planck Y-up to canvas
   Y-down coordinate system
+
+## [2026-05-14] - Stage 14: Evolution Loop (The Core Game Loop)
+
+### Added
+- **`page.tsx`** — Full 15-second evolution loop implemented:
+  - 100ms interval ticks elapsed time and updates countdown display
+  - On completion: collects CreatureResult[] from SimulationEngine,
+    POSTs to /api/evolve, advances generation via nextGeneration store action
+  - generationRunning ref prevents double-firing on dep re-triggers
+  - Loading screen shows until genesis data arrives
+- **`PhysicsArena.tsx`** — onEngineReady prop added, called immediately
+  after SimulationEngine instantiation so parent has engine reference
+  before first physics tick
+- **`api.ts`** — EvolveResponse updated to match real backend shape:
+  genomes + stats (best_fitness, avg_fitness, species_count)
+
+### Technical Decisions
+- **100ms interval over rAF:** timer countdown is UI state, not physics
+  state — 100ms polling is sufficient and avoids coupling the countdown
+  to the physics frame rate
+- **engineRef over state:** engine instance stored in ref not state to
+  prevent re-renders from tearing down the physics world mid-simulation
+- **getResults() fallback:** if engine not ready, sends zero-fitness
+  scores so the backend still evolves rather than crashing
