@@ -70,3 +70,13 @@
 
 ### Technical Decisions
 - **Class-Based Engine:** Opted for a stateful TypeScript Class (`SimulationEngine`) rather than a React Hook to encapsulate the heavy `planck.js` world state and prevent React re-render cycles from interfering with deterministic physics stepping.
+
+## [2026-05-14] - Stage 8: The Physics Arena (Visuals)
+### Added
+- **UI Component:** `frontend/src/components/arena/PhysicsArena.tsx` implemented.
+- **Renderer:** Built an HTML5 Canvas render loop tied to `requestAnimationFrame` to visualize the Box2D bodies.
+- **Integration:** Connected the Zustand global state (population, playback controls) directly to the `SimulationEngine` instantiation.
+
+### Technical Decisions
+- **Canvas Matrix Transformations:** Used `ctx.save()`, `translate`, and `rotate` to accurately map `planck.js` center-of-mass coordinates and rotations to the screen without manual vertex math.
+- **Speed Multiplier:** Handled simulation speed by running multiple logical ticks per visual frame, ensuring deterministic physics regardless of fast-forwarding.
