@@ -88,3 +88,22 @@
 
 ### Technical Decisions
 - **Client Component:** Designated the main page as a `"use client"` boundary to support React hooks, Zustand state, and browser-only canvas rendering without triggering SSR hydration mismatches.
+
+## [2026-05-14] - Stage 10: Backend Test Suite (Genesis)
+
+### Added
+- **Tests:** `backend/tests/test_genesis.py` — 12 pytest tests covering the `/api/genesis` endpoint
+- **Package:** `backend/tests/__init__.py` — empty package marker
+- **Config:** `conftest.py` at root level — path fix so `from backend.main import app` resolves correctly from the evomorph root
+
+### Test Coverage
+- Response shape: 20 genomes, all required fields present
+- Generation 0 constraints: generation=0, fitness=0.0, no connections
+- Morphology validation: exactly 1 BODY_SEGMENT, exactly 3 INPUT sensors (BODY_ANGLE, GROUND_CONTACT, OSCILLATOR)
+- Physical range checks: width 10-60, height 5-30, density 0.5-3.0, friction 0.1-1.0
+- Uniqueness: all 20 genome_ids are distinct
+
+### Technical Decisions
+- **Module-scoped fixture:** Genesis endpoint called once, response shared across all 12 tests to avoid redundant HTTP round-trips
+- **Private helper `_torso()`:** Locates the BODY_SEGMENT node without repeating filter logic across range tests
+- **Descriptive failure messages:** Every assertion includes `genome_id` and offending value for instant debugging
