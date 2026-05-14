@@ -240,3 +240,20 @@
 - Backend NEAT selection now has meaningful fitness signal to work with
 - Evolution will begin directing toward forward locomotion rather than
   selecting randomly
+
+  ## [2026-05-14] - Stage 17: Fitness & Evolution Fixes
+
+### Fixed
+- **`SimulationLoop.ts`** — Fitness now measures displacement from spawn
+  position not absolute X coordinate. Added `startX` field to CreatureState,
+  initialized at frame 0. All 20 creatures now compete on equal terms
+  regardless of spawn position
+- **`population.py`** — `best_fitness`, `avg_fitness`, `fitness_std` in
+  GenerationStats now computed from incoming CreatureResult scores (real
+  simulated values) not from new offspring genomes (which are always 0.0
+  before simulation)
+
+### Impact
+- Evolution now selects for actual locomotion ability not spawn position
+- Best fitness display in top bar now shows real values
+- NEAT selection pressure is correctly directed toward forward movement

@@ -14,6 +14,7 @@ interface CreatureState {
   physics: PhysicsCreature;
   prevActivations: Map<number, number>;
   // fitness accumulators
+  startX: number;
   maxX: number;
   timeUpright: number;
   cumulativeTorque: number;
@@ -85,11 +86,15 @@ export class SimulationEngine {
         0,
       );
 
+      const torso0 = physics.bodies.get(0);
+      const startX = torso0 ? torso0.getPosition().x : i * CREATURE_SPACING_M;
+
       this.creatures.push({
         genome,
         physics,
         prevActivations: new Map(),
-        maxX: 0,
+        startX,
+        maxX: startX,
         timeUpright: 0,
         cumulativeTorque: 0,
         headGroundTime: 0,
@@ -204,8 +209,10 @@ export class SimulationEngine {
       const torso = creature.physics.bodies.get(0);
       const finalPos = torso ? torso.getPosition() : { x: 0, y: 0 };
 
+      const displacement = creature.maxX - creature.startX;
+
       const fitness = calculateFitness({
-        maxX: creature.maxX,
+        maxX: displacement,
         timeUpright: creature.timeUpright,
         cumulativeTorque: creature.cumulativeTorque,
         headGroundTime: creature.headGroundTime,
@@ -216,7 +223,7 @@ export class SimulationEngine {
       return {
         genome_id: creature.genome.genome_id,
         fitness,
-        max_x_position: creature.maxX,
+        max_x_position: displacement,
         time_upright: creature.timeUpright,
         cumulative_torque: creature.cumulativeTorque,
         head_ground_time: creature.headGroundTime,
