@@ -224,3 +224,19 @@
 - **`SimulationLoop.ts`** — `getResults()` now returns `max_x_position`,
   `final_x`, `final_y` in raw planck metres instead of pixels. Backend
   fitness function expects metres not pixels
+
+  ## [2026-05-14] - Stage 16: Fitness Calculation
+
+### Added
+- **`FitnessCalculator.ts`** — Implemented `calculateFitness` per PRD §4.5:
+  - Primary reward: max X distance in planck metres
+  - Upright bonus: up to 50 points (fraction of time torso above ground)
+  - Energy penalty: up to 30 points (cumulative torque ratio)
+  - Head touch penalty: 90% of distance score lost if torso on ground > 0.5s
+- **`SimulationLoop.ts`** — `getResults()` now calls `calculateFitness` for
+  each creature. Replaced `fitness: 0` placeholder with real computed value
+
+### Impact
+- Backend NEAT selection now has meaningful fitness signal to work with
+- Evolution will begin directing toward forward locomotion rather than
+  selecting randomly

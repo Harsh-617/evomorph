@@ -1,6 +1,7 @@
 import * as planck from 'planck';
 import { ConnectionType, CreatureResult, Genome, NodeType, SensorType } from '../types/genome';
 import { createPhysicsCreature, PhysicsCreature, PIXELS_PER_METER } from './CreatureBuilder';
+import { calculateFitness } from './FitnessCalculator';
 import { evaluateNetwork } from './NeuralNetwork';
 
 const GENERATION_TIME = 15;    // seconds
@@ -203,9 +204,18 @@ export class SimulationEngine {
       const torso = creature.physics.bodies.get(0);
       const finalPos = torso ? torso.getPosition() : { x: 0, y: 0 };
 
+      const fitness = calculateFitness({
+        maxX: creature.maxX,
+        timeUpright: creature.timeUpright,
+        cumulativeTorque: creature.cumulativeTorque,
+        headGroundTime: creature.headGroundTime,
+        numJoints: creature.numJoints,
+        maxTorque: creature.maxTorque,
+      });
+
       return {
         genome_id: creature.genome.genome_id,
-        fitness: 0, // computed by the Python backend from the other fields
+        fitness,
         max_x_position: creature.maxX,
         time_upright: creature.timeUpright,
         cumulative_torque: creature.cumulativeTorque,
