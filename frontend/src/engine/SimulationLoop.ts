@@ -261,6 +261,25 @@ export class SimulationEngine {
     return this.getLeaderCreature()?.genome ?? null;
   }
 
+  getLeaderboardData(): Array<{ genome_id: string; rank: number; fitness: number; species_id: number; isLeader: boolean }> {
+    const sorted = [...this.creatures]
+      .sort((a, b) => (b.maxX - b.startX) - (a.maxX - a.startX));
+    return sorted.map((creature, i) => ({
+      genome_id: creature.genome.genome_id,
+      rank: i + 1,
+      fitness: calculateFitness({
+        maxX: creature.maxX - creature.startX,
+        timeUpright: creature.timeUpright,
+        cumulativeTorque: creature.cumulativeTorque,
+        headGroundTime: creature.headGroundTime,
+        numJoints: creature.numJoints,
+        maxTorque: creature.maxTorque,
+      }),
+      species_id: creature.genome.species_id,
+      isLeader: i === 0,
+    }));
+  }
+
   getResults(): CreatureResult[] {
     return this.creatures.map((creature) => {
       const torso = creature.physics.bodies.get(0);

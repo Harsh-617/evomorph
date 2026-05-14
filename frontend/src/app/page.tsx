@@ -6,6 +6,7 @@ import { useSimulationStore } from "@/store/simulationStore";
 import PhysicsArena from "@/components/arena/PhysicsArena";
 import GodModePanel from "@/components/godmode/GodModePanel";
 import NeuralInspector from "@/components/inspector/NeuralInspector";
+import Leaderboard, { LeaderboardEntry } from "@/components/leaderboard/Leaderboard";
 import { CreatureResult, Genome } from "@/types/genome";
 import { SimulationEngine } from "@/engine/SimulationLoop";
 
@@ -29,6 +30,7 @@ export default function Home() {
     genome: Genome;
     activations: Map<number, number>;
   } | null>(null);
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
   const engineRef = useRef<SimulationEngine | null>(null);
   const generationRunning = useRef(false);
 
@@ -133,6 +135,7 @@ export default function Home() {
             onActivationsUpdate={(genome, activations) =>
               setInspectorData({ genome, activations })
             }
+            onLeaderboardUpdate={setLeaderboardData}
           />
         </div>
         <aside className="w-80 flex-shrink-0 overflow-y-auto flex flex-col gap-4 p-4 bg-slate-900 border-l border-slate-700">
@@ -141,6 +144,7 @@ export default function Home() {
             activations={inspectorData?.activations ?? new Map()}
           />
           <GodModePanel />
+          <Leaderboard entries={leaderboardData} />
         </aside>
       </main>
     </div>

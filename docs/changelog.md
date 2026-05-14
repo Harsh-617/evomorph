@@ -339,3 +339,22 @@
 - **`PhysicsArena.tsx`** — `onActivationsUpdate` prop with 10-frame throttle
 - **`api.ts`** — `evolvePopulation` accepts real environment parameters
 - **`page.tsx`** — Right sidebar with NeuralInspector above GodModePanel
+
+## [2026-05-14] - Stage 23: Leaderboard
+
+### Added
+- **`Leaderboard.tsx`** — Real-time fitness ranking of all 20 creatures
+  per PRD §7.2. Each entry shows rank, fitness bar, score, and species
+  color dot. Leader highlighted with cyan ring
+- **`SimulationLoop.ts`** — `getLeaderboardData()` method sorts creatures
+  by displacement and returns ranked entries with live fitness scores
+- **`PhysicsArena.tsx`** — `onLeaderboardUpdate` prop, called every 10
+  frames alongside activations update (shared throttle)
+- **`page.tsx`** — `leaderboardData` state wired between PhysicsArena
+  and Leaderboard component. Rendered below GodModePanel in sidebar
+
+### Technical Decisions
+- **Deterministic species color:** `hsl((species_id * 47) % 360, 70%, 60%)`
+  gives visually distinct colors per species without a color registry
+- **Shared 10-frame throttle:** Leaderboard and Neural Inspector both
+  update at ~6 FPS to avoid UI thrashing while physics runs at 60 FPS

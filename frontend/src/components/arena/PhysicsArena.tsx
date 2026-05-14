@@ -6,6 +6,7 @@ import { SimulationEngine } from '@/engine/SimulationLoop';
 import { PIXELS_PER_METER } from '@/engine/CreatureBuilder';
 import { useSimulationStore } from '@/store/simulationStore';
 import { Genome } from '@/types/genome';
+import { LeaderboardEntry } from '@/components/leaderboard/Leaderboard';
 
 // planck's PolygonShape stores local vertices here, but the type is internal
 interface PlanckPolygon extends planck.Shape {
@@ -20,15 +21,17 @@ interface PlanckEdge extends planck.Shape {
 interface PhysicsArenaProps {
   onEngineReady?: (engine: SimulationEngine) => void;
   onActivationsUpdate?: (genome: Genome, activations: Map<number, number>) => void;
+  onLeaderboardUpdate?: (data: LeaderboardEntry[]) => void;
 }
 
-export default function PhysicsArena({ onEngineReady, onActivationsUpdate }: PhysicsArenaProps) {
+export default function PhysicsArena({ onEngineReady, onActivationsUpdate, onLeaderboardUpdate }: PhysicsArenaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<SimulationEngine | null>(null);
   const rafRef = useRef<number>(0);
   const isPlayingRef = useRef(false);
   const speedRef = useRef<1 | 2 | 5>(1);
   const onActivationsUpdateRef = useRef(onActivationsUpdate);
+  const onLeaderboardUpdateRef = useRef(onLeaderboardUpdate);
   const frameCountRef = useRef(0);
 
   const { population, gravity, friction, terrain, isPlaying, simulationSpeed } =
@@ -39,6 +42,7 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate }: Phy
   useEffect(() => { isPlayingRef.current = isPlaying; }, [isPlaying]);
   useEffect(() => { speedRef.current = simulationSpeed; }, [simulationSpeed]);
   useEffect(() => { onActivationsUpdateRef.current = onActivationsUpdate; }, [onActivationsUpdate]);
+  useEffect(() => { onLeaderboardUpdateRef.current = onLeaderboardUpdate; }, [onLeaderboardUpdate]);
 
   // Re-create the engine and restart the render loop when the population or
   // physics parameters change.
@@ -82,10 +86,15 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate }: Phy
       }
 
       frameCountRef.current += 1;
-      if (frameCountRef.current % 10 === 0 && onActivationsUpdateRef.current) {
-        const genome = engineRef.current.getLeaderGenome();
-        if (genome) {
-          onActivationsUpdateRef.current(genome, engineRef.current.getLeaderActivations());
+      if (frameCountRef.current % 10 === 0) {
+        if (onActivationsUpdateRef.current) {
+          const genome = engineRef.current.getLeaderGenome();
+          if (genome) {
+            onActivationsUpdateRef.current(genome, engineRef.current.getLeaderActivations());
+          }
+        }
+        if (onLeaderboardUpdateRef.current) {
+          onLeaderboardUpdateRef.current(engineRef.current.getLeaderboardData());
         }
       }
 
