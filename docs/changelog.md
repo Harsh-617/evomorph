@@ -80,3 +80,11 @@
 ### Technical Decisions
 - **Canvas Matrix Transformations:** Used `ctx.save()`, `translate`, and `rotate` to accurately map `planck.js` center-of-mass coordinates and rotations to the screen without manual vertex math.
 - **Speed Multiplier:** Handled simulation speed by running multiple logical ticks per visual frame, ensuring deterministic physics regardless of fast-forwarding.
+
+## [2026-05-14] - Stage 9: The Genesis Drop
+### Added
+- **UI Shell:** `frontend/src/app/page.tsx` implemented as the primary client entry point.
+- **Data Hydration:** Built the mount-time fetch logic to pull Generation 0 from the FastAPI backend and inject it into the Zustand store.
+
+### Technical Decisions
+- **Client Component:** Designated the main page as a `"use client"` boundary to support React hooks, Zustand state, and browser-only canvas rendering without triggering SSR hydration mismatches.
