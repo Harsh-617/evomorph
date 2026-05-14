@@ -24,23 +24,22 @@ export async function fetchGenesis(): Promise<Genome[]> {
   }
 }
 
+export interface EnvironmentParams {
+  gravity: number;
+  friction: number;
+  terrain: string;
+}
+
 export async function evolvePopulation(
   generation: number,
-  scores: CreatureResult[]
+  scores: CreatureResult[],
+  environment: EnvironmentParams = { gravity: 1.0, friction: 0.6, terrain: "flat" }
 ): Promise<EvolveResponse> {
   try {
     const res = await fetch(`${BASE_URL}/api/evolve`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        generation,
-        scores,
-        environment: {
-          gravity: 1.0,
-          friction: 0.6,
-          terrain: "flat"
-        }
-      }),
+      body: JSON.stringify({ generation, scores, environment }),
     });
     if (!res.ok) {
       throw new Error(`POST /api/evolve failed with status ${res.status}`);

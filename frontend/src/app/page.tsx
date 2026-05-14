@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { fetchGenesis, evolvePopulation } from "@/services/api";
 import { useSimulationStore } from "@/store/simulationStore";
 import PhysicsArena from "@/components/arena/PhysicsArena";
+import GodModePanel from "@/components/godmode/GodModePanel";
 import { CreatureResult } from "@/types/genome";
 import { SimulationEngine } from "@/engine/SimulationLoop";
 
@@ -16,6 +17,9 @@ export default function Home() {
     isPlaying,
     togglePlay,
     nextGeneration,
+    gravity,
+    friction,
+    terrain,
   } = useSimulationStore();
 
   const [loading, setLoading] = useState(true);
@@ -66,7 +70,7 @@ export default function Home() {
             }));
 
         try {
-          const response = await evolvePopulation(generation, results);
+          const response = await evolvePopulation(generation, results, { gravity, friction, terrain });
           nextGeneration(response.genomes, response.stats.best_fitness);
           setTimer(15.0);
         } catch (err) {
@@ -115,12 +119,17 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex-grow">
-        <PhysicsArena
-          onEngineReady={(engine) => {
-            engineRef.current = engine;
-          }}
-        />
+      <main className="flex-grow flex flex-row overflow-hidden">
+        <div className="flex-1">
+          <PhysicsArena
+            onEngineReady={(engine) => {
+              engineRef.current = engine;
+            }}
+          />
+        </div>
+        <aside className="w-80 flex flex-col gap-4 p-4 bg-slate-900 border-l border-slate-700 overflow-y-auto">
+          <GodModePanel />
+        </aside>
       </main>
     </div>
   );
