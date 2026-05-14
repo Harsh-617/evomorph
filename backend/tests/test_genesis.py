@@ -54,11 +54,13 @@ def test_genesis_fitness_is_zero(genomes):
         assert genome["fitness"] == 0.0, f"genome {genome['genome_id']}: fitness={genome['fitness']}"
 
 
-def test_genesis_no_connections(genomes):
+def test_genesis_has_initial_connections(genomes):
+    """Gen 0 creatures now start with 1 JOINT + 1 SYNAPSE (limb pre-wired)"""
     for genome in genomes:
-        assert genome["connection_genes"] == [], (
-            f"genome {genome['genome_id']} has unexpected connections"
-        )
+        joints = [c for c in genome["connection_genes"] if c["conn_type"] == "JOINT"]
+        synapses = [c for c in genome["connection_genes"] if c["conn_type"] == "SYNAPSE"]
+        assert len(joints) == 1, f"genome {genome['genome_id']}: expected 1 JOINT, got {len(joints)}"
+        assert len(synapses) == 1, f"genome {genome['genome_id']}: expected 1 SYNAPSE, got {len(synapses)}"
 
 
 # ---------------------------------------------------------------------------
@@ -66,11 +68,12 @@ def test_genesis_no_connections(genomes):
 # ---------------------------------------------------------------------------
 
 
-def test_genesis_has_one_body_segment(genomes):
+def test_genesis_has_two_body_segments(genomes):
+    """Gen 0 creatures now start with torso + 1 limb"""
     for genome in genomes:
         body_segments = [n for n in genome["node_genes"] if n["type"] == "BODY_SEGMENT"]
-        assert len(body_segments) == 1, (
-            f"genome {genome['genome_id']}: expected 1 BODY_SEGMENT, got {len(body_segments)}"
+        assert len(body_segments) == 2, (
+            f"genome {genome['genome_id']}: expected 2 BODY_SEGMENTs, got {len(body_segments)}"
         )
 
 

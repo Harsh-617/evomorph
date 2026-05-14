@@ -98,20 +98,12 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate, onLea
         }
       }
 
-      // §6.2 Camera-follow: find the creature whose torso (gene_id === 0) is furthest right.
+      // §6.2 Camera-follow: find the creature with the greatest displacement (maxX - startX),
+      // then use its actual current X for camera placement.
       const physicsCreatures = engineRef.current.getPhysicsCreatures();
-      let leaderX = 0;
-      let leaderCreature: (typeof physicsCreatures)[0] | null = null;
-      for (const creature of physicsCreatures) {
-        const torso = creature.bodies.get(0);
-        if (torso) {
-          const x = torso.getPosition().x;
-          if (x > leaderX) {
-            leaderX = x;
-            leaderCreature = creature;
-          }
-        }
-      }
+      const leaderGenomeId = engineRef.current.getLeaderGenome()?.genome_id ?? null;
+      const leaderCreature = physicsCreatures.find(c => c.genomeId === leaderGenomeId) ?? null;
+      const leaderX = leaderCreature?.bodies.get(0)?.getPosition().x ?? 0;
 
       // Keep leader 25% from left edge — gives visual space ahead.
       const cameraX = leaderX * PIXELS_PER_METER - W * 0.25;

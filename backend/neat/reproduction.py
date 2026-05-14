@@ -260,6 +260,15 @@ def _add_limb(genome: dict, tracker: InnovationTracker) -> None:
         "activation": None,
     })
 
+    # Immediately wire a random INPUT → new OUTPUT synapse so the limb is controllable
+    input_nodes = [n for n in genome["node_genes"] if n["type"] == "INPUT"]
+    if input_nodes:
+        src = random.choice(input_nodes)
+        syn_iid = tracker.get_innovation(src["gene_id"], motor_id, "SYNAPSE")
+        genome["connection_genes"].append(
+            _make_synapse(syn_iid, src["gene_id"], motor_id, round(random.uniform(*config.SYNAPSE_WEIGHT_RANGE), 4))
+        )
+
 
 def _remove_limb(genome: dict) -> None:
     """Remove a random leaf BODY_SEGMENT and all its associated genes."""

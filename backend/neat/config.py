@@ -18,15 +18,15 @@ CROSSOVER_RATE: float = 0.75
 ELITISM_THRESHOLD: int = 5
 
 # Body mutation rates
-ADD_LIMB_RATE: float = 0.08
+ADD_LIMB_RATE: float = 0.15
 REMOVE_LIMB_RATE: float = 0.03
 MUTATE_SEGMENT_RATE: float = 0.15
 MUTATE_JOINT_RATE: float = 0.15
 ADD_SENSOR_RATE: float = 0.05
 
 # Neural mutation rates
-MUTATE_WEIGHT_RATE: float = 0.80
-ADD_SYNAPSE_RATE: float = 0.10
+MUTATE_WEIGHT_RATE: float = 0.90
+ADD_SYNAPSE_RATE: float = 0.20
 ADD_NODE_RATE: float = 0.05
 TOGGLE_ENABLE_RATE: float = 0.03
 

@@ -32,6 +32,7 @@ export class SimulationEngine {
   private _world: planck.World;
   private creatures: CreatureState[] = [];
   private time = 0;
+  private frameCount = 0;
 
   constructor(genomes: Genome[], gravityMultiplier: number, friction: number, terrain: string = 'flat') {
     this._world = new planck.World(new planck.Vec2(0, -10 * gravityMultiplier));
@@ -147,6 +148,7 @@ export class SimulationEngine {
   }
 
   tick(deltaTime: number): void {
+    this.frameCount++;
     this.time += deltaTime;
 
     for (const creature of this.creatures) {
@@ -199,6 +201,8 @@ export class SimulationEngine {
         const joint = creature.outputJointMap.get(nodeId);
         const maxTorque = creature.outputMaxTorqueMap.get(nodeId) ?? 200;
         if (joint) {
+          joint.enableMotor(true);
+          joint.setMaxMotorTorque(maxTorque);
           joint.setMotorSpeed(activation * MAX_MOTOR_SPEED);
           tickTorque += Math.abs(activation) * maxTorque;
         }

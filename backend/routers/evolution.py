@@ -15,6 +15,8 @@ from ..schemas.evolution import (
     SpeciesInfo,
 )
 from ..schemas.genome import (
+    ConnectionGene,
+    ConnectionType,
     Genome,
     NeuralNetwork,
     NodeGene,
@@ -51,13 +53,42 @@ def _make_minimal_genome() -> Genome:
         NodeGene(gene_id=2, type=NodeType.INPUT, sensor_type=SensorType.GROUND_CONTACT, attached_segment_id=0),
         NodeGene(gene_id=3, type=NodeType.INPUT, sensor_type=SensorType.OSCILLATOR, attached_segment_id=0),
     ]
+    limb_seg = NodeGene(
+        gene_id=4,
+        type=NodeType.BODY_SEGMENT,
+        width=round(random.uniform(10.0, 60.0), 4),
+        height=round(random.uniform(5.0, 30.0), 4),
+        density=round(random.uniform(0.5, 3.0), 4),
+        friction=round(random.uniform(0.1, 1.0), 4),
+    )
+    motor = NodeGene(gene_id=5, type=NodeType.OUTPUT, attached_segment_id=4)
+    joint_gene = ConnectionGene(
+        innovation_id=0,
+        in_node=0,
+        out_node=4,
+        conn_type=ConnectionType.JOINT,
+        enabled=True,
+        angle_limit_min=round(random.uniform(-1.57, 0.0), 4),
+        angle_limit_max=round(random.uniform(0.0, 1.57), 4),
+        max_motor_torque=round(random.uniform(50.0, 500.0), 4),
+        weight=None,
+    )
+    src_id = random.choice([1, 2, 3])
+    synapse_gene = ConnectionGene(
+        innovation_id=1,
+        in_node=src_id,
+        out_node=5,
+        conn_type=ConnectionType.SYNAPSE,
+        enabled=True,
+        weight=round(random.uniform(-3.0, 3.0), 4),
+    )
     return Genome(
         genome_id=str(uuid.uuid4()),
         species_id=0,
         generation=0,
         fitness=0.0,
-        node_genes=[torso, *sensors],
-        connection_genes=[],
+        node_genes=[torso, *sensors, limb_seg, motor],
+        connection_genes=[joint_gene, synapse_gene],
         brain=NeuralNetwork(weights=[], biases=[]),
     )
 

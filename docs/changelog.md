@@ -372,3 +372,27 @@
 - Leaderboard scores increase during simulation as creatures move
 - Leaderboard resets to 0 at generation boundary when new creatures spawn
 - God Mode slider changes no longer reset leaderboard mid-generation
+
+## [2026-05-14] - Stage 25: Motor Fix + NEAT Evolution Fix
+
+### Fixed
+- **`SimulationLoop.ts`** — Added `enableMotor(true)` and
+  `setMaxMotorTorque()` calls every tick. Motors were receiving speed
+  commands but joints weren't responding without explicit enable
+- **`PhysicsArena.tsx`** — Leader selection now uses displacement
+  (maxX - startX) not absolute X. Camera no longer locks onto the
+  rightmost-spawned stationary creature
+- **`reproduction.py`** — New limbs now immediately get a wired synapse
+  on the same mutation step. Fixes chicken-and-egg problem where limbs
+  existed but had no neural control for many generations
+- **`evolution.py`** — Genesis creatures now start with 1 limb + 1
+  synapse pre-wired so evolution has something to work with from Gen 0
+- **`config.py`** — Increased ADD_LIMB_RATE to 0.15, ADD_SYNAPSE_RATE
+  to 0.20, MUTATE_WEIGHT_RATE to 0.90
+- **`test_genesis.py`** — Updated tests to match new genesis format
+  (2 body segments, 1 joint + 1 synapse)
+
+### Impact
+- Creatures now visibly move and flail from Generation 1
+- Camera correctly tracks the creature that has traveled furthest
+- Evolution has meaningful fitness signal to select toward locomotion
