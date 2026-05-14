@@ -257,3 +257,10 @@
 - Evolution now selects for actual locomotion ability not spawn position
 - Best fitness display in top bar now shows real values
 - NEAT selection pressure is correctly directed toward forward movement
+
+## [2026-05-14] - Stage 18: Creature Spacing & Visual Polish
+
+### Changed
+- **`SimulationLoop.ts`** — Reduced creature spawn spacing from 20m to 3m
+  (600px to 90px apart). All 20 creatures now visible on screen simultaneously
+  showing population diversity across generations

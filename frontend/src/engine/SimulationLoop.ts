@@ -7,7 +7,7 @@ import { evaluateNetwork } from './NeuralNetwork';
 const GENERATION_TIME = 15;    // seconds
 const MAX_MOTOR_SPEED = 10;    // rad/s — max speed the motor can drive a joint
 const GROUND_THRESHOLD = 0.5; // metres; torso centre below this → "on ground"
-const CREATURE_SPACING_M = 20; // metres between creature spawn points
+const CREATURE_SPACING_M = 3; // 3 metres apart = 90px, keeps all 20 creatures visible
 
 interface CreatureState {
   genome: Genome;
