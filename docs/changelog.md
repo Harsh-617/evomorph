@@ -358,3 +358,17 @@
   gives visually distinct colors per species without a color registry
 - **Shared 10-frame throttle:** Leaderboard and Neural Inspector both
   update at ~6 FPS to avoid UI thrashing while physics runs at 60 FPS
+
+  ## [2026-05-14] - Stage 24: Leaderboard Fix + God Mode Stability
+
+### Fixed
+- **`PhysicsArena.tsx`** — Removed `gravity`, `friction`, `terrain` from
+  SimulationEngine useEffect dependency array. Engine now only restarts
+  at generation boundaries when `population` changes, not when God Mode
+  sliders are adjusted. Physics changes correctly apply next generation
+  without destroying current simulation state
+
+### Behavior Confirmed Correct
+- Leaderboard scores increase during simulation as creatures move
+- Leaderboard resets to 0 at generation boundary when new creatures spawn
+- God Mode slider changes no longer reset leaderboard mid-generation

@@ -233,7 +233,7 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate, onLea
       cancelAnimationFrame(rafRef.current);
       ro.disconnect();
     };
-  }, [population, gravity, friction, terrain]);
+  }, [population]);
 
   return (
     <div className="w-full h-full">
