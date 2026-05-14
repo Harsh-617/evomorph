@@ -264,3 +264,25 @@
 - **`SimulationLoop.ts`** — Reduced creature spawn spacing from 20m to 3m
   (600px to 90px apart). All 20 creatures now visible on screen simultaneously
   showing population diversity across generations
+
+  ## [2026-05-14] - Stage 19: God Mode Panel
+
+### Added
+- **`GodModePanel.tsx`** — Interactive environment controls per PRD §5.1:
+  - Gravity slider (0.1x – 3.0x) with cyan value display
+  - Friction slider (0.0 Ice – 1.0 Rubber) with cyan value display
+  - Terrain selector (flat/hurdles/stairs/hills) as 2×2 button grid
+  - Amber "⚡ Changes apply next generation" indicator when any value
+    differs from defaults
+- **`api.ts`** — `evolvePopulation` now accepts environment as third
+  parameter. POST body sends real gravity/friction/terrain instead of
+  hardcoded defaults
+- **`page.tsx`** — Layout restructured into flex row: arena (flex-1)
+  + right sidebar (w-80) containing GodModePanel
+
+### Technical Decisions
+- **Next-generation application:** Physics changes take effect when
+  SimulationEngine is re-created at generation boundary, not mid-simulation.
+  This ensures fair fitness comparison within a generation per PRD §5.1
+- **Store-driven physics:** PhysicsArena already reads gravity/friction
+  from Zustand store so engine re-creation on slider change was implicit
