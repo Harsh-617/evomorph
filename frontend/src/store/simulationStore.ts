@@ -2,12 +2,20 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Genome } from '../types/genome';
 
+export interface GenerationRecord {
+  generation: number;
+  bestFitness: number;
+  avgFitness: number;
+  speciesCount: number;
+}
+
 interface SimulationState {
   // Simulation progress
   generation: number;
   bestFitness: number;
   allTimeRecord: number;
   population: Genome[];
+  history: GenerationRecord[];
 
   // God Mode sliders
   gravity: number;
@@ -24,6 +32,7 @@ interface SimulationState {
   setTerrain: (type: string) => void;
   nextGeneration: (newGenomes: Genome[], fitness: number) => void;
   togglePlay: () => void;
+  addHistoryRecord: (record: GenerationRecord) => void;
 }
 
 export const useSimulationStore = create<SimulationState>()(
@@ -33,6 +42,7 @@ export const useSimulationStore = create<SimulationState>()(
       bestFitness: 0,
       allTimeRecord: 0,
       population: [],
+      history: [],
 
       gravity: 1.0,
       friction: 0.6,
@@ -56,6 +66,9 @@ export const useSimulationStore = create<SimulationState>()(
         })),
 
       togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
+
+      addHistoryRecord: (record) =>
+        set((state) => ({ history: [...state.history, record] })),
     }),
     {
       name: 'evomorph-simulation',

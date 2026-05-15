@@ -464,3 +464,21 @@
 - Creatures complexifying to 4 limbs, 6 synapses by Gen 13
   vs previously 1 limb, 1 synapse at Gen 35
 - Score variance between generations is expected NEAT behavior
+
+## [2026-05-15] - Stage 29: Phylogeny Timeline + UI Polish
+
+### Added
+- **`PhylogenyTimeline.tsx`** — Fitness curve at the bottom of the screen
+  using recharts ComposedChart. Area chart for avg fitness, line for best
+  fitness. Tooltip shows generation, avg fitness, best fitness on hover
+- **`simulationStore.ts`** — Added `history: GenerationRecord[]` state and
+  `addHistoryRecord` action to accumulate per-generation stats
+- **`page.tsx`** — Timeline strip (h-40) below main content area. Calls
+  `addHistoryRecord` after each successful evolvePopulation
+
+### Fixed
+- **`NeuralInspector.tsx`** — "Species" label renamed to "Species ID" to
+  clarify it shows the leader's species membership not total species count
+- **`page.tsx` + `PhylogenyTimeline.tsx`** — Timeline height increased to
+  h-40 for better visibility
+- **`page.tsx`** — Added `min-h-0` to sidebar to eliminate scrollbar overflow

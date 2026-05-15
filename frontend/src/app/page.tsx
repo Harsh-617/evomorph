@@ -7,6 +7,7 @@ import PhysicsArena from "@/components/arena/PhysicsArena";
 import GodModePanel from "@/components/godmode/GodModePanel";
 import NeuralInspector from "@/components/inspector/NeuralInspector";
 import Leaderboard, { LeaderboardEntry } from "@/components/leaderboard/Leaderboard";
+import PhylogenyTimeline from "@/components/phylogeny/PhylogenyTimeline";
 import { CreatureResult, Genome } from "@/types/genome";
 import { SimulationEngine } from "@/engine/SimulationLoop";
 
@@ -19,6 +20,7 @@ export default function Home() {
     isPlaying,
     togglePlay,
     nextGeneration,
+    addHistoryRecord,
     gravity,
     friction,
     terrain,
@@ -79,6 +81,12 @@ export default function Home() {
         try {
           const response = await evolvePopulation(generation, results, { gravity, friction, terrain });
           nextGeneration(response.genomes, response.stats.best_fitness);
+          addHistoryRecord({
+            generation,
+            bestFitness: response.stats.best_fitness,
+            avgFitness: response.stats.avg_fitness,
+            speciesCount: response.stats.species_count,
+          });
           setTimer(15.0);
         } catch (err) {
           console.error("Evolution failed:", err);
@@ -138,7 +146,7 @@ export default function Home() {
             onLeaderboardUpdate={setLeaderboardData}
           />
         </div>
-        <aside className="w-80 flex-shrink-0 overflow-y-auto flex flex-col gap-4 p-4 bg-slate-900 border-l border-slate-700">
+        <aside className="w-80 flex-shrink-0 min-h-0 overflow-y-auto flex flex-col gap-4 p-4 bg-slate-900 border-l border-slate-700">
           <NeuralInspector
             genome={inspectorData?.genome ?? null}
             activations={inspectorData?.activations ?? new Map()}
@@ -147,6 +155,10 @@ export default function Home() {
           <Leaderboard entries={leaderboardData} />
         </aside>
       </main>
+
+      <div className="h-40 flex-shrink-0">
+        <PhylogenyTimeline />
+      </div>
     </div>
   );
 }

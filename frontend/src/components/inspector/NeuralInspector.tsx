@@ -230,7 +230,7 @@ function CreatureStats({ genome }: { genome: Genome }) {
       <div className="text-cyan-400">{bodySegments.length}</div>
       <div className="text-slate-400">Synapses</div>
       <div className="text-cyan-400">{synapses.length}</div>
-      <div className="text-slate-400">Species</div>
+      <div className="text-slate-400">Species ID</div>
       <div className="text-cyan-400">{genome.species_id}</div>
       <div className="text-slate-400">Generation</div>
       <div className="text-cyan-400">{genome.generation}</div>
