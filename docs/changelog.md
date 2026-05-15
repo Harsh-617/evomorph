@@ -482,3 +482,15 @@
 - **`page.tsx` + `PhylogenyTimeline.tsx`** — Timeline height increased to
   h-40 for better visibility
 - **`page.tsx`** — Added `min-h-0` to sidebar to eliminate scrollbar overflow
+
+## [2026-05-15] - Stage 30: Top Bar Controls
+
+### Added
+- **`page.tsx`** — All-time record display in amber in top bar. Persists
+  across generations via Zustand persist middleware
+- **`page.tsx`** — Speed multiplier buttons (1x/2x/5x) in top bar. Active
+  speed highlighted in cyan. Wired to simulationSpeed store state which
+  PhysicsArena already reads via speedRef
+- **`page.tsx`** — New Population button. Stops current generation, resets
+  timer, fetches fresh genesis, zeros generation/bestFitness/history
+- **`simulationStore.ts`** — Added `setSimulationSpeed` action

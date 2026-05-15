@@ -17,7 +17,10 @@ export default function Home() {
     setPopulation,
     generation,
     bestFitness,
+    allTimeRecord,
     isPlaying,
+    simulationSpeed,
+    setSimulationSpeed,
     togglePlay,
     nextGeneration,
     addHistoryRecord,
@@ -25,6 +28,14 @@ export default function Home() {
     friction,
     terrain,
   } = useSimulationStore();
+
+  const handleReset = async () => {
+    generationRunning.current = false;
+    setTimer(15.0);
+    const genomes = await fetchGenesis();
+    setPopulation(genomes);
+    useSimulationStore.setState({ generation: 0, bestFitness: 0, history: [] });
+  };
 
   const [loading, setLoading] = useState(true);
   const [timer, setTimer] = useState(15.0);
@@ -117,14 +128,34 @@ export default function Home() {
         <div className="flex items-center gap-6">
           <span className="text-xl font-bold text-white">EvoMorph</span>
           <span className="text-slate-400 text-sm">Gen: {generation}</span>
-          <span className="text-slate-400 text-sm">
-            Best: {bestFitness.toFixed(1)}
-          </span>
+          <span className="text-slate-400 text-sm">Best: {bestFitness.toFixed(1)}</span>
+          <span className="text-amber-400 text-sm">Record: {allTimeRecord.toFixed(1)}</span>
         </div>
         <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1">
+            {([1, 2, 5] as const).map((speed) => (
+              <button
+                key={speed}
+                onClick={() => setSimulationSpeed(speed)}
+                className={`px-2 py-1 rounded text-xs font-mono transition-colors ${
+                  simulationSpeed === speed
+                    ? 'bg-cyan-500 text-slate-900'
+                    : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
+                }`}
+              >
+                {speed}x
+              </button>
+            ))}
+          </div>
           <span className="text-cyan-400 font-mono text-sm">
             {timer.toFixed(1)}s
           </span>
+          <button
+            onClick={handleReset}
+            className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-xs font-medium transition-colors"
+          >
+            New Population
+          </button>
           <button
             onClick={togglePlay}
             className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition-colors"

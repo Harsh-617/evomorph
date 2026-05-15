@@ -33,6 +33,7 @@ interface SimulationState {
   nextGeneration: (newGenomes: Genome[], fitness: number) => void;
   togglePlay: () => void;
   addHistoryRecord: (record: GenerationRecord) => void;
+  setSimulationSpeed: (speed: 1 | 2 | 5) => void;
 }
 
 export const useSimulationStore = create<SimulationState>()(
@@ -69,6 +70,8 @@ export const useSimulationStore = create<SimulationState>()(
 
       addHistoryRecord: (record) =>
         set((state) => ({ history: [...state.history, record] })),
+
+      setSimulationSpeed: (speed) => set({ simulationSpeed: speed }),
     }),
     {
       name: 'evomorph-simulation',
