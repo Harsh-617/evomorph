@@ -597,3 +597,23 @@
 - 22/22 backend tests passing
 - 21/21 frontend tests passing
 - 43/43 total tests passing
+
+## [2026-05-15] - Stage 38: Code Quality — Critical Fixes
+
+### Fixed (Critical)
+- **`routers/evolution.py`** — Removed 3 debug print() statements and
+  synapse_counts_diag dead variable that fired on every /api/evolve request.
+  Removed now-unused `import statistics`
+- **`population.py`** — Fixed stale docstring "20 new genome dicts" →
+  "POPULATION_SIZE new genome dicts"
+- **`routers/evolution.py`** — Fixed stale genesis() docstring "20 minimal
+  genomes" → "POPULATION_SIZE minimal genomes"
+- **`MotorController.ts` + `SensorReader.ts`** — Deleted empty stub files.
+  All logic lives in SimulationLoop.ts. No imports existed
+- **`backend/fitness/evaluator.py`** — Deleted empty misleading module and
+  fitness/ directory
+- **`backend/config.py`** — Deleted empty top-level config stub. Real config
+  is backend/neat/config.py
+
+### Test Results
+- 22/22 backend tests passing

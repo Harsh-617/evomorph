@@ -84,7 +84,7 @@ class Population:
         6  Produce offspring (elitism + crossover 75 % / asexual 25 %).
         7  Re-speciate the new population.
         8  Reset the innovation tracker for the next generation.
-        9  Return exactly 20 new genome dicts.
+        9  Return exactly POPULATION_SIZE new genome dicts.
         """
         # 1. Assign fitness scores
         score_map: dict[str, float] = {s["genome_id"]: s["fitness"] for s in scores}
