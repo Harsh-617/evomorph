@@ -227,6 +227,7 @@ export class SimulationEngine {
 
     // ── 5. Advance physics ─────────────────────────────────────────────────
     this._world.step(1 / 60);
+
   }
 
   isTimeUp(): boolean {
@@ -273,9 +274,7 @@ export class SimulationEngine {
       rank: i + 1,
       fitness: calculateFitness({
         maxX: creature.maxX - creature.startX,
-        timeUpright: creature.timeUpright,
         cumulativeTorque: creature.cumulativeTorque,
-        headGroundTime: creature.headGroundTime,
         numJoints: creature.numJoints,
         maxTorque: creature.maxTorque,
       }),
@@ -293,9 +292,7 @@ export class SimulationEngine {
 
       const fitness = calculateFitness({
         maxX: displacement,
-        timeUpright: creature.timeUpright,
         cumulativeTorque: creature.cumulativeTorque,
-        headGroundTime: creature.headGroundTime,
         numJoints: creature.numJoints,
         maxTorque: creature.maxTorque,
       });

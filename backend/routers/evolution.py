@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+import statistics
 import uuid
 from typing import List
 
@@ -146,6 +147,14 @@ def evolve(request: EvolveRequest) -> EvolveResponse:
     for d in new_dicts:
         d["generation"] = new_generation
     _current_genomes = new_dicts
+
+    # --- TEMPORARY DIAGNOSTIC LOGGING ---
+    joint_counts = [len([g for g in genome["connection_genes"] if g["conn_type"] == "JOINT"]) for genome in new_dicts]
+    synapse_counts_diag = [len([g for g in genome["connection_genes"] if g["conn_type"] == "SYNAPSE"]) for genome in new_dicts]
+    print(f"Gen {request.generation + 1} offspring — joints: min={min(joint_counts)} max={max(joint_counts)} avg={statistics.mean(joint_counts):.1f}")
+    print(f"Gen {request.generation + 1} offspring — synapses: min={min(synapse_counts_diag)} max={max(synapse_counts_diag)} avg={statistics.mean(synapse_counts_diag):.1f}")
+    print(f"Incoming fitness: min={min(s.fitness for s in request.scores):.1f} max={max(s.fitness for s in request.scores):.1f}")
+    # --- END TEMPORARY DIAGNOSTIC LOGGING ---
 
     # Build species_info from pre-respeciation snapshot so counts/fitness reflect scored gen
     species_hue_map = {sp.species_id: sp.color_hue for sp in _population.species}

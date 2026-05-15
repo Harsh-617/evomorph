@@ -446,3 +446,21 @@
 
 ### Test Results
 - 22/22 passing after all fixes
+
+## [2026-05-15] - Stage 28: Fitness Function Overhaul
+
+### Changed
+- **`FitnessCalculator.ts`** — Complete rewrite. Distance is now the
+  overwhelming signal: `distanceScore = maxX * 5`. Upright bonus removed
+  entirely — stationary creatures now score 0. Small efficiency bonus
+  (max 10 points) replaces head touch penalty. This broke the fitness
+  plateau at 25 points where upright bonus was masking real locomotion
+- **`SimulationLoop.ts`** — Removed timeUpright/headGroundTime from
+  calculateFitness call sites. Removed debug console.table block
+- **`routers/evolution.py`** — Removed diagnostic print statements
+
+### Impact
+- Best fitness now climbs proportionally to actual movement
+- Creatures complexifying to 4 limbs, 6 synapses by Gen 13
+  vs previously 1 limb, 1 synapse at Gen 35
+- Score variance between generations is expected NEAT behavior
