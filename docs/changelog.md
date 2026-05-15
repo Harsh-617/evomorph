@@ -534,3 +534,20 @@
 - **`page.tsx`** — Added `simulationSpeedRef` to fix stale closure issue.
   Speed changes mid-generation now take effect immediately on the next
   interval tick rather than waiting for the next generation
+
+  ## [2026-05-15] - Stage 34: CreatureBuilder Tests
+
+### Added
+- **`CreatureBuilder.test.ts`** — 7 Jest tests covering: bodies Map return,
+  body count per BODY_SEGMENT, torso at gene_id 0, joints Map return,
+  joint count per enabled JOINT gene, throws without torso, ignores
+  disabled joints
+- **Mock strategy:** planck.js fully mocked at module level so tests run
+  in Node.js without a browser environment. Vec2 implemented as plain
+  {x,y} object to support BFS anchor arithmetic in CreatureBuilder
+
+### Test Results
+- 7/7 CreatureBuilder tests passing
+- 21/21 total frontend tests passing
+- 22/22 backend tests passing
+- 43/43 total tests passing across the project
