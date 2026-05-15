@@ -13,45 +13,57 @@ interface LeaderboardProps {
   entries: LeaderboardEntry[];
 }
 
-function LeaderboardEntryRow({ entry, maxFitness }: { entry: LeaderboardEntry; maxFitness: number }) {
-  const hue = Math.round(((entry.species_id * GOLDEN_RATIO) % 1) * 360);
-  const lightness = entry.isLeader ? 70 : 55; // leader slightly brighter
-  const color = `hsl(${hue}, ${SPECIES_COLOR_SATURATION}%, ${lightness}%)`;
-  const barWidth = maxFitness > 0 ? (entry.fitness / maxFitness) * 100 : 0;
-
-  return (
-    <div className={`flex items-center gap-2 px-2 py-1 rounded-lg text-xs
-      ${entry.isLeader ? 'bg-slate-700 ring-1 ring-cyan-500' : 'hover:bg-slate-700'}`}>
-      <span className="text-slate-400 w-5 text-right text-xs">{entry.rank}</span>
-      <div className="flex-1 h-1.5 bg-slate-600 rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-300"
-          style={{ width: `${barWidth}%`, backgroundColor: color }}
-        />
-      </div>
-      <span className="text-slate-300 w-12 text-right font-mono">
-        {entry.fitness.toFixed(1)}
-      </span>
-      <div
-        className="w-2 h-2 rounded-full flex-shrink-0"
-        style={{ backgroundColor: color }}
-      />
-    </div>
-  );
-}
-
 export type { LeaderboardEntry };
 
 export default function Leaderboard({ entries }: LeaderboardProps) {
+  const maxFitness = entries[0]?.fitness ?? 1;
+
   return (
-    <div className="flex flex-col gap-2 p-4 bg-slate-800 rounded-xl border border-slate-700">
-      <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-        Leaderboard
-      </h3>
-      <div className="flex flex-col gap-1 max-h-64 overflow-y-auto">
-        {entries.map((entry) => (
-          <LeaderboardEntryRow key={entry.genome_id} entry={entry} maxFitness={entries[0]?.fitness ?? 1} />
-        ))}
+    <div className="flex flex-col">
+
+      {/* Header */}
+      <div className="px-3 py-2 flex items-center gap-2"
+        style={{ borderBottom: '1px solid #21262d' }}>
+        <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#00d4ff' }} />
+        <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#7d8590]">
+          Leaderboard
+        </span>
+      </div>
+
+      <div className="flex flex-col">
+        {entries.map((entry) => {
+          const hue = Math.round(((entry.species_id * GOLDEN_RATIO) % 1) * 360);
+          const color = `hsl(${hue}, ${SPECIES_COLOR_SATURATION}%, ${entry.isLeader ? 70 : 55}%)`;
+          const barWidth = maxFitness > 0 ? (entry.fitness / maxFitness) * 100 : 0;
+
+          return (
+            <div key={entry.genome_id}
+              className="flex items-center gap-2 px-3 py-1.5"
+              style={{
+                borderBottom: '1px solid #21262d',
+                background: entry.isLeader ? 'rgba(0,212,255,0.04)' : 'transparent',
+              }}>
+              {/* Rank */}
+              <span className="font-mono text-[9px] w-3 text-right flex-shrink-0"
+                style={{ color: entry.isLeader ? '#00d4ff' : '#4a5568' }}>
+                {entry.rank}
+              </span>
+              {/* Bar */}
+              <div className="flex-1 h-1 relative" style={{ background: '#1c2128' }}>
+                <div className="absolute left-0 top-0 h-full transition-all duration-300"
+                  style={{ width: `${barWidth}%`, background: color }} />
+              </div>
+              {/* Score */}
+              <span className="font-mono text-[10px] w-10 text-right flex-shrink-0"
+                style={{ color: entry.isLeader ? '#00d4ff' : '#7d8590' }}>
+                {entry.fitness.toFixed(1)}
+              </span>
+              {/* Species dot */}
+              <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                style={{ background: color }} />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

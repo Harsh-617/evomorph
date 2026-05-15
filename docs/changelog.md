@@ -720,3 +720,15 @@
   - Header and stats row are flex-shrink-0, middle content scrolls
 - **`PhysicsArena.tsx`** — Ground anchor at 70% canvas height
 - **`page.tsx`** — Arena div positioned top:40px bottom:128px
+
+## [2026-05-15] - Stage 44: God Mode + Leaderboard Redesign
+
+### Changed
+- **`GodModePanel.tsx`** — Complete redesign: sharp 1px borders, no rounded
+  corners, IBM Plex Mono labels, cyan accent sliders, terrain buttons with
+  inline border/color styles, amber bordered "⚡ NEXT GENERATION" indicator
+- **`Leaderboard.tsx`** — Complete redesign: inlined LeaderboardEntryRow,
+  4px bar height with #1c2128 track, 1px row dividers, leader row subtle
+  cyan background, species colors via golden ratio
+- **`PhylogenyTimeline.tsx`** — Species count bar opacity reduced from
+  0.6 to 0.2 so fitness curve is the dominant visual

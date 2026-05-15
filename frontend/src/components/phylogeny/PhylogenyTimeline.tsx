@@ -88,7 +88,7 @@ export default function PhylogenyTimeline() {
           <Bar
             dataKey="speciesCount"
             fill="#1e3a5f"
-            opacity={0.6}
+            opacity={0.2}
             yAxisId="species"
             name="Species"
           />
