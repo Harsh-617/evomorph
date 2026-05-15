@@ -524,3 +524,13 @@
 - **`README.md`** — Updated with demo link placeholder, stack table, local
   setup instructions, project structure, how it works section, and NEAT
   reference citation
+
+  ## [2026-05-15] - Stage 33: Speed Multiplier Fix
+
+### Fixed
+- **`page.tsx`** — Generation timer now scales with simulationSpeed.
+  Previously elapsed always accumulated 0.1s per 100ms tick regardless
+  of speed. At 5x, timer now reaches 15s in 3 real seconds
+- **`page.tsx`** — Added `simulationSpeedRef` to fix stale closure issue.
+  Speed changes mid-generation now take effect immediately on the next
+  interval tick rather than waiting for the next generation

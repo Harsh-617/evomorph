@@ -46,6 +46,10 @@ export default function Home() {
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
   const engineRef = useRef<SimulationEngine | null>(null);
   const generationRunning = useRef(false);
+  const simulationSpeedRef = useRef(simulationSpeed);
+  useEffect(() => {
+    simulationSpeedRef.current = simulationSpeed;
+  }, [simulationSpeed]);
 
   useEffect(() => {
     if (population.length === 0) {
@@ -66,7 +70,7 @@ export default function Home() {
     let elapsed = 0;
     const GENERATION_TIME = 15.0;
     const interval = setInterval(async () => {
-      elapsed += 0.1;
+      elapsed += 0.1 * simulationSpeedRef.current;
       setTimer(Math.max(0, GENERATION_TIME - elapsed));
 
       if (elapsed >= GENERATION_TIME) {
