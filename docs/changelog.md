@@ -560,3 +560,22 @@
   Low species IDs (0-5) now spread across the full hue spectrum instead
   of clustering near red. Leader entry slightly brighter (lightness 70
   vs 55). Rank number styling improved
+
+  ## [2026-05-15] - Stage 36: Phylogeny & Leaderboard Polish
+
+### Added
+- **`PhylogenyTimeline.tsx`** — Species count bars below fitness curve
+  (hidden Y-axis to avoid clutter). Environment change markers as amber
+  dashed vertical ReferenceLine when gravity/friction/terrain changes
+  between generations
+- **`simulationStore.ts`** — GenerationRecord now includes environment
+  snapshot (gravity/friction/terrain) for change detection
+- **`page.tsx`** — addHistoryRecord now passes current environment
+
+### Fixed
+- **`Leaderboard.tsx`** — Golden ratio species colors. Leader entry
+  brighter (lightness 70 vs 55). Rank number styling improved
+- **`PhylogenyTimeline.tsx`** — Removed visible species Y-axis labels
+  that were cluttering the right side of the timeline
+- **`SimulationLoop.ts`** — Hurdles now start at x=8m, stairs at x=10m.
+  Terrain obstacles now appear where creatures actually travel

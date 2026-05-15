@@ -7,6 +7,11 @@ export interface GenerationRecord {
   bestFitness: number;
   avgFitness: number;
   speciesCount: number;
+  environment: {
+    gravity: number;
+    friction: number;
+    terrain: string;
+  };
 }
 
 interface SimulationState {

@@ -101,6 +101,7 @@ export default function Home() {
             bestFitness: response.stats.best_fitness,
             avgFitness: response.stats.avg_fitness,
             speciesCount: response.stats.species_count,
+            environment: { gravity, friction, terrain },
           });
           setTimer(15.0);
         } catch (err) {

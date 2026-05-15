@@ -46,7 +46,7 @@ export class SimulationEngine {
 
     if (terrain === 'hurdles') {
       for (let i = 1; i <= 20; i++) {
-        const hurdleX = 65 + i * 3.33;
+        const hurdleX = 8 + i * 2.0;
         const hurdleBody = this._world.createBody({ type: 'static', position: planck.Vec2(hurdleX, 0) });
         hurdleBody.createFixture({
           shape: planck.Box(0.25, 0.33),
@@ -57,7 +57,7 @@ export class SimulationEngine {
 
     if (terrain === 'stairs') {
       for (let i = 0; i < 30; i++) {
-        const stepX = 65 + i * 2.0;
+        const stepX = 10 + i * 1.5;
         const stepY = i * 0.4;
         const stepBody = this._world.createBody({ type: 'static', position: planck.Vec2(stepX, stepY) });
         stepBody.createFixture({
