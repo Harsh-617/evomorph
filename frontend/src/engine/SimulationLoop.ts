@@ -33,6 +33,8 @@ export class SimulationEngine {
   private creatures: CreatureState[] = [];
   private time = 0;
   private frameCount = 0;
+  private allActivationHistories: Map<string, Map<number, number[]>> = new Map();
+  private readonly HISTORY_LENGTH = 60;
 
   constructor(genomes: Genome[], gravityMultiplier: number, friction: number, terrain: string = 'flat') {
     this._world = new planck.World(new planck.Vec2(0, -10 * gravityMultiplier));
@@ -211,6 +213,20 @@ export class SimulationEngine {
       // Carry all activations forward so recurrent synapses have values next tick
       creature.prevActivations = allActivations;
 
+      const creatureId = creature.genome.genome_id;
+      if (!this.allActivationHistories.has(creatureId)) {
+        this.allActivationHistories.set(creatureId, new Map());
+      }
+      const creatureHistory = this.allActivationHistories.get(creatureId)!;
+      for (const [nodeId, activation] of allActivations) {
+        if (!creatureHistory.has(nodeId)) {
+          creatureHistory.set(nodeId, []);
+        }
+        const hist = creatureHistory.get(nodeId)!;
+        hist.push(activation);
+        if (hist.length > this.HISTORY_LENGTH) hist.shift();
+      }
+
       // ── 4. Fitness accumulators ───────────────────────────────────────────
       if (torsoPos.x > creature.maxX) creature.maxX = torsoPos.x;
 
@@ -260,6 +276,26 @@ export class SimulationEngine {
   getLeaderActivations(): Map<number, number> {
     const leader = this.getLeaderCreature();
     return leader ? new Map(leader.prevActivations) : new Map();
+  }
+
+  getActivationHistory(): Map<number, number[]> {
+    const leader = this.getLeaderCreature();
+    if (!leader) return new Map();
+    return new Map(this.allActivationHistories.get(leader.genome.genome_id) ?? new Map());
+  }
+
+  getCreatureData(genomeId: string): {
+    genome: Genome;
+    activations: Map<number, number>;
+    history: Map<number, number[]>;
+  } | null {
+    const creature = this.creatures.find(c => c.genome.genome_id === genomeId);
+    if (!creature) return null;
+    return {
+      genome: creature.genome,
+      activations: new Map(creature.prevActivations),
+      history: new Map(this.allActivationHistories.get(genomeId) ?? new Map()),
+    };
   }
 
   getLeaderGenome(): Genome | null {

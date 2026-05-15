@@ -21,11 +21,12 @@ interface PlanckEdge extends planck.Shape {
 
 interface PhysicsArenaProps {
   onEngineReady?: (engine: SimulationEngine) => void;
-  onActivationsUpdate?: (genome: Genome, activations: Map<number, number>) => void;
+  onActivationsUpdate?: (genome: Genome, activations: Map<number, number>, history: Map<number, number[]>) => void;
   onLeaderboardUpdate?: (data: LeaderboardEntry[]) => void;
+  onCreatureClick?: (genomeId: string) => void;
 }
 
-export default function PhysicsArena({ onEngineReady, onActivationsUpdate, onLeaderboardUpdate }: PhysicsArenaProps) {
+export default function PhysicsArena({ onEngineReady, onActivationsUpdate, onLeaderboardUpdate, onCreatureClick }: PhysicsArenaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<SimulationEngine | null>(null);
   const rafRef = useRef<number>(0);
@@ -33,6 +34,7 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate, onLea
   const speedRef = useRef<1 | 2 | 5>(1);
   const onActivationsUpdateRef = useRef(onActivationsUpdate);
   const onLeaderboardUpdateRef = useRef(onLeaderboardUpdate);
+  const onCreatureClickRef = useRef(onCreatureClick);
   const frameCountRef = useRef(0);
 
   const { population, gravity, friction, terrain, isPlaying, simulationSpeed } =
@@ -44,6 +46,7 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate, onLea
   useEffect(() => { speedRef.current = simulationSpeed; }, [simulationSpeed]);
   useEffect(() => { onActivationsUpdateRef.current = onActivationsUpdate; }, [onActivationsUpdate]);
   useEffect(() => { onLeaderboardUpdateRef.current = onLeaderboardUpdate; }, [onLeaderboardUpdate]);
+  useEffect(() => { onCreatureClickRef.current = onCreatureClick; }, [onCreatureClick]);
 
   // Re-create the engine and restart the render loop when the population or
   // physics parameters change.
@@ -68,6 +71,33 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate, onLea
     const ro = new ResizeObserver(syncSize);
     ro.observe(canvas);
 
+    const handleClick = (e: MouseEvent) => {
+      if (!engineRef.current) return;
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      const creatures = engineRef.current.getPhysicsCreatures();
+      const leaderGenomeId = engineRef.current.getLeaderGenome()?.genome_id ?? null;
+      const leaderCreature = creatures.find(c => c.genomeId === leaderGenomeId) ?? null;
+      const leaderX = leaderCreature?.bodies.get(0)?.getPosition().x ?? 0;
+      const cameraX = leaderX * PIXELS_PER_METER - canvas.width * 0.25;
+
+      for (const creature of creatures) {
+        const torso = creature.bodies.get(0);
+        if (!torso) continue;
+        const pos = torso.getPosition();
+        const screenX = pos.x * PIXELS_PER_METER - cameraX;
+        const screenY = canvas.height * 0.70 - pos.y * PIXELS_PER_METER;
+        const dist = Math.sqrt((clickX - screenX) ** 2 + (clickY - screenY) ** 2);
+        if (dist < 40) {
+          onCreatureClickRef.current?.(creature.genomeId);
+          break;
+        }
+      }
+    };
+    canvas.addEventListener('click', handleClick);
+
     function loop() {
       if (!ctx || !canvas || !engineRef.current) {
         rafRef.current = requestAnimationFrame(loop);
@@ -87,11 +117,11 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate, onLea
       }
 
       frameCountRef.current += 1;
-      if (frameCountRef.current % 10 === 0) {
+      if (frameCountRef.current % 3 === 0) {
         if (onActivationsUpdateRef.current) {
           const genome = engineRef.current.getLeaderGenome();
           if (genome) {
-            onActivationsUpdateRef.current(genome, engineRef.current.getLeaderActivations());
+            onActivationsUpdateRef.current(genome, engineRef.current.getLeaderActivations(), engineRef.current.getActivationHistory());
           }
         }
         if (onLeaderboardUpdateRef.current) {
@@ -226,6 +256,7 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate, onLea
     return () => {
       cancelAnimationFrame(rafRef.current);
       ro.disconnect();
+      canvas.removeEventListener('click', handleClick);
     };
   }, [population]);
 

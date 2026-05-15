@@ -6,6 +6,7 @@ import { useSimulationStore } from "@/store/simulationStore";
 import PhysicsArena from "@/components/arena/PhysicsArena";
 import GodModePanel from "@/components/godmode/GodModePanel";
 import NeuralInspector from "@/components/inspector/NeuralInspector";
+import LiveNeuralViz from "@/components/inspector/LiveNeuralViz";
 import Leaderboard, { LeaderboardEntry } from "@/components/leaderboard/Leaderboard";
 import PhylogenyTimeline from "@/components/phylogeny/PhylogenyTimeline";
 import { CreatureResult, Genome } from "@/types/genome";
@@ -39,6 +40,26 @@ export default function Home() {
     activations: Map<number, number>;
   } | null>(null);
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
+  const [neuralVizOpen, setNeuralVizOpen] = useState(false);
+  const [neuralHistory, setNeuralHistory] = useState<Map<number, number[]>>(new Map());
+
+  const handleActivationsUpdate = (
+    genome: Genome,
+    activations: Map<number, number>,
+    history: Map<number, number[]>
+  ) => {
+    setInspectorData({ genome, activations });
+    setNeuralHistory(history);
+  };
+
+  const handleCreatureClick = (genomeId: string) => {
+    if (!engineRef.current) return;
+    const data = engineRef.current.getCreatureData(genomeId);
+    if (!data) return;
+    setInspectorData({ genome: data.genome, activations: data.activations });
+    setNeuralHistory(data.history);
+    setNeuralVizOpen(true);
+  };
   const engineRef = useRef<SimulationEngine | null>(null);
   const generationRunning = useRef(false);
   const simulationSpeedRef = useRef(simulationSpeed);
@@ -131,14 +152,70 @@ export default function Home() {
   return (
     <div className="relative w-screen h-screen overflow-hidden" style={{ background: '#0d1117' }}>
 
-      {/* PHYSICS ARENA */}
-      <div className="absolute left-0 right-0 arena-scanlines"
-        style={{ top: '40px', bottom: '128px' }}>
-        <PhysicsArena
-          onEngineReady={(engine) => { engineRef.current = engine; }}
-          onActivationsUpdate={(genome, activations) => setInspectorData({ genome, activations })}
-          onLeaderboardUpdate={setLeaderboardData}
-        />
+      {/* MAIN CONTENT AREA — arena takes full width */}
+      <div className="absolute left-0 right-0" style={{ top: '40px', bottom: '128px' }}>
+
+        {/* Arena fills everything */}
+        <div className="absolute inset-0 arena-scanlines">
+          <PhysicsArena
+            onEngineReady={(engine) => { engineRef.current = engine; }}
+            onActivationsUpdate={handleActivationsUpdate}
+            onLeaderboardUpdate={setLeaderboardData}
+            onCreatureClick={handleCreatureClick}
+          />
+        </div>
+
+        {/* LEFT PANEL — floats over arena */}
+        <div className="absolute left-0 top-0 bottom-0 overflow-y-auto z-10"
+          style={{
+            width: '232px',
+            borderRight: '1px solid #21262d',
+            background: 'rgba(13,17,23,0.6)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+          }}>
+          <NeuralInspector
+            genome={inspectorData?.genome ?? null}
+            activations={inspectorData?.activations ?? new Map()}
+          />
+        </div>
+
+        {/* RIGHT PANEL — floats over arena */}
+        <div className="absolute right-0 top-0 bottom-0 overflow-y-auto z-10 flex flex-col"
+          style={{
+            width: '208px',
+            borderLeft: '1px solid #21262d',
+            background: 'rgba(13,17,23,0.6)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+          }}>
+          <GodModePanel />
+          <div style={{ borderTop: '1px solid #21262d' }}>
+            <Leaderboard entries={leaderboardData} />
+          </div>
+        </div>
+
+        {/* LIVE NEURAL VIZ — floats over arena when open */}
+        {neuralVizOpen && (
+          <div className="absolute z-20"
+            style={{
+              top: '10px',
+              left: '242px',
+              right: '218px',
+              bottom: '10px',
+              background: 'rgba(13,17,23,0.95)',
+              border: '1px solid #21262d',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+            }}>
+            <LiveNeuralViz
+              genome={inspectorData?.genome ?? null}
+              activations={inspectorData?.activations ?? new Map()}
+              history={neuralHistory}
+              onClose={() => setNeuralVizOpen(false)}
+            />
+          </div>
+        )}
       </div>
 
       {/* TOP BAR — minimal HUD strip */}
@@ -184,6 +261,11 @@ export default function Home() {
             ))}
           </div>
 
+          {/* Neural Viz hint */}
+          <span className="font-mono text-[9px] text-[#4a5568]">
+            CLICK CREATURE TO INSPECT
+          </span>
+
           {/* New Population */}
           <button
             onClick={handleReset}
@@ -205,24 +287,6 @@ export default function Home() {
           >
             {isPlaying ? 'PAUSE' : 'PLAY'}
           </button>
-        </div>
-      </div>
-
-      {/* LEFT PANEL — Neural Inspector, pinned to left edge */}
-      <div className="absolute left-0 top-10 bottom-32 z-10 w-56 overflow-y-auto"
-        style={{ background: 'rgba(13,17,23,0.9)', borderRight: '1px solid #21262d' }}>
-        <NeuralInspector
-          genome={inspectorData?.genome ?? null}
-          activations={inspectorData?.activations ?? new Map()}
-        />
-      </div>
-
-      {/* RIGHT PANEL — God Mode + Leaderboard */}
-      <div className="absolute right-0 top-10 bottom-32 z-10 w-52 overflow-y-auto flex flex-col"
-        style={{ background: 'rgba(13,17,23,0.9)', borderLeft: '1px solid #21262d' }}>
-        <GodModePanel />
-        <div style={{ borderTop: '1px solid #21262d' }}>
-          <Leaderboard entries={leaderboardData} />
         </div>
       </div>
 

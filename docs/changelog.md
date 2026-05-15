@@ -732,3 +732,40 @@
   cyan background, species colors via golden ratio
 - **`PhylogenyTimeline.tsx`** — Species count bar opacity reduced from
   0.6 to 0.2 so fitness curve is the dominant visual
+
+  ## [2026-05-15] - Stage 45: Live Neural Visualization
+
+### Added
+- **`LiveNeuralViz.tsx`** — Full technical neural network visualization:
+  - Stats bar: nodes, synapses, total signal energy, network depth, efficiency %
+  - Network graph: INPUT/HIDDEN/OUTPUT column layout, weighted edges colored
+    blue/red by sign, nodes glow with activation values overlaid inside circles
+  - Animated signal pulse dots traveling along active edges
+  - Weight labels on each edge showing exact weight value
+  - Forward pass breakdown: node × weight = contribution → target for every synapse
+  - Weight matrix heatmap: cyan=positive, red=negative, opacity=|weight|
+  - Activation traces panel: per-node oscilloscope with 60-tick history,
+    min/max/σ statistics below each trace
+- **`SimulationLoop.ts`** — Per-creature activation history tracking
+  (nested Map: genome_id → node_id → last 60 activation values)
+  `getCreatureData(genomeId)` returns genome, activations, history
+- **`PhysicsArena.tsx`** — Click detection on creatures (40px radius),
+  `onCreatureClick` prop fires with genome_id. Activation history passed
+  alongside current activations in `onActivationsUpdate` callback (3-frame throttle)
+- **`page.tsx`** — Click-to-inspect: clicking creature opens LiveNeuralViz
+  as floating overlay over arena. "CLICK CREATURE TO INSPECT" hint in top bar
+
+## [2026-05-15] - Stage 46: UI Redesign — Layout & Panels
+
+### Changed
+- **`page.tsx`** — Full layout restructure: arena takes full width with
+  panels floating over it as absolute-positioned overlays. Left panel
+  (Neural Inspector) and right panel (God Mode + Leaderboard) use
+  semi-transparent backgrounds with backdrop blur
+- **`globals.css`** — Added backdrop-blur-sm class with webkit prefix
+- **`NeuralInspector.tsx`** — Removed card wrapper, transparent background,
+  expand modal constrained to arena space, BodyDiagram moved to modal only
+- **`GodModePanel.tsx`** — Sharp 1px borders, monospace labels, cyan sliders
+- **`Leaderboard.tsx`** — 4px bars, golden ratio species colors, 1px dividers
+- **`PhylogenyTimeline.tsx`** — Species bar opacity reduced to 0.2
+- **`PhysicsArena.tsx`** — Ground at 70% canvas height, green ground line
