@@ -11,17 +11,22 @@ interface LeaderboardProps {
 }
 
 function LeaderboardEntry({ entry, maxFitness }: { entry: LeaderboardEntry; maxFitness: number }) {
-  const hue = (entry.species_id * 47) % 360;
+  // Use golden ratio to spread colors evenly regardless of species ID value
+  const GOLDEN_RATIO = 0.618033988749895;
+  const hue = Math.round(((entry.species_id * GOLDEN_RATIO) % 1) * 360);
+  const saturation = 70;
+  const lightness = entry.isLeader ? 70 : 55; // leader slightly brighter
+  const color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   const barWidth = maxFitness > 0 ? (entry.fitness / maxFitness) * 100 : 0;
 
   return (
     <div className={`flex items-center gap-2 px-2 py-1 rounded-lg text-xs
       ${entry.isLeader ? 'bg-slate-700 ring-1 ring-cyan-500' : 'hover:bg-slate-700'}`}>
-      <span className="text-slate-500 w-4">{entry.rank}</span>
+      <span className="text-slate-400 w-5 text-right text-xs">{entry.rank}</span>
       <div className="flex-1 h-1.5 bg-slate-600 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-300"
-          style={{ width: `${barWidth}%`, backgroundColor: `hsl(${hue}, 70%, 60%)` }}
+          style={{ width: `${barWidth}%`, backgroundColor: color }}
         />
       </div>
       <span className="text-slate-300 w-12 text-right font-mono">
@@ -29,7 +34,7 @@ function LeaderboardEntry({ entry, maxFitness }: { entry: LeaderboardEntry; maxF
       </span>
       <div
         className="w-2 h-2 rounded-full flex-shrink-0"
-        style={{ backgroundColor: `hsl(${hue}, 70%, 60%)` }}
+        style={{ backgroundColor: color }}
       />
     </div>
   );

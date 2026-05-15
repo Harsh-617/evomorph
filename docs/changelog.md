@@ -551,3 +551,12 @@
 - 21/21 total frontend tests passing
 - 22/22 backend tests passing
 - 43/43 total tests passing across the project
+
+## [2026-05-15] - Stage 35: Leaderboard Species Colors
+
+### Fixed
+- **`Leaderboard.tsx`** — Species color now uses golden ratio distribution
+  `hsl((species_id * 0.618...) % 1 * 360)` instead of `species_id * 47 % 360`.
+  Low species IDs (0-5) now spread across the full hue spectrum instead
+  of clustering near red. Leader entry slightly brighter (lightness 70
+  vs 55). Rank number styling improved
