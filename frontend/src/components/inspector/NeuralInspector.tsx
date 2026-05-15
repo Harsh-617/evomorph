@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ConnectionType, Genome, NodeType } from '@/types/genome';
 
 export interface NeuralInspectorProps {
@@ -254,142 +255,135 @@ export default function NeuralInspector({ genome, activations }: NeuralInspector
   const bodySegments = genome?.node_genes.filter((n) => n.type === NodeType.BODY_SEGMENT) ?? [];
   const synapses = genome?.connection_genes.filter((c) => c.conn_type === ConnectionType.SYNAPSE) ?? [];
 
-  return (
-    <div className="flex flex-col">
-      {/* Header */}
-      <div
-        className="px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-[#161b22] transition-colors"
-        style={{ borderBottom: '1px solid #21262d' }}
-        onClick={() => setExpanded(true)}
-      >
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#00d4ff' }} />
-          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#7d8590]">
-            Neural Inspector
-          </span>
-        </div>
-        <span className="font-mono text-[9px] text-[#7d8590]">⤢ expand</span>
-      </div>
+  const modal = expanded && genome ? createPortal(
+    <div className="fixed z-50 flex items-center justify-center"
+      style={{
+        top: '40px',
+        left: '232px',
+        right: '208px',
+        bottom: '128px',
+        background: 'rgba(0,0,0,0.7)',
+      }}
+      onClick={() => setExpanded(false)}>
+      <div className="flex flex-col"
+        style={{
+          width: '680px',
+          height: 'calc(100% - 40px)',
+          background: '#161b22',
+          border: '1px solid #21262d',
+        }}
+        onClick={(e) => e.stopPropagation()}>
 
-      {!genome ? (
-        <div className="px-3 py-4 font-mono text-[10px] text-[#7d8590]">
-          No creature selected
-        </div>
-      ) : (
-        <>
-          <div className="px-2 py-2">
-            <NetworkGraph genome={genome} activations={activations} />
+        {/* Modal header */}
+        <div className="flex-shrink-0 px-4 py-3 flex items-center justify-between"
+          style={{ borderBottom: '1px solid #21262d' }}>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full" style={{ background: '#00d4ff' }} />
+            <span className="font-mono text-xs tracking-[0.2em] uppercase text-[#7d8590]">
+              Neural Inspector — {genome.genome_id.slice(0, 8).toUpperCase()}
+            </span>
           </div>
+          <button onClick={() => setExpanded(false)}
+            className="font-mono text-xs text-[#7d8590] hover:text-[#e6edf3] transition-colors px-2 py-1"
+            style={{ border: '1px solid #21262d' }}>
+            ✕ CLOSE
+          </button>
+        </div>
 
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Large NetworkGraph */}
+          <div className="p-4">
+            <NetworkGraph
+              genome={genome}
+              activations={activations}
+              viewBox="0 0 500 300"
+              svgHeight={280}
+              colX={{ input: 60, hidden: 250, output: 440 }}
+              layoutH={280}
+              margin={40}
+              nodeR={14}
+              fontSize={11}
+            />
+          </div>
           <div style={{ borderTop: '1px solid #21262d' }} />
-
-          <div className="px-3 py-2 grid grid-cols-2 gap-x-4 gap-y-1">
-            {([
-              ['LIMBS', bodySegments.length],
-              ['SYNAPSES', synapses.length],
-              ['SPECIES', genome.species_id],
-              ['GEN', genome.generation],
-            ] as [string, string | number][]).map(([label, value]) => (
-              <div key={label} className="flex justify-between items-center">
-                <span className="font-mono text-[10px] text-[#7d8590] tracking-wider">{label}</span>
-                <span className="font-mono text-[11px] text-[#00d4ff] font-medium">{value}</span>
-              </div>
-            ))}
+          {/* Body Structure */}
+          <div className="px-4 py-3">
+            <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#7d8590] mb-2">
+              Body Structure
+            </div>
+            <BodyDiagram genome={genome} />
           </div>
-        </>
-      )}
+        </div>
 
-      {expanded && (
+        {/* Stats pinned at bottom */}
+        <div className="flex-shrink-0 px-4 py-4 grid grid-cols-4 gap-4"
+          style={{ borderTop: '1px solid #21262d' }}>
+          {[
+            ['LIMBS', genome.node_genes.filter(n => n.type === 'BODY_SEGMENT').length],
+            ['SYNAPSES', genome.connection_genes.filter(c => c.conn_type === 'SYNAPSE').length],
+            ['SPECIES', genome.species_id],
+            ['GENERATION', genome.generation],
+          ].map(([label, value]) => (
+            <div key={String(label)} className="flex flex-col gap-1"
+              style={{ borderTop: '1px solid #21262d', paddingTop: '12px' }}>
+              <span className="font-mono text-[9px] tracking-wider text-[#7d8590]">{label}</span>
+              <span className="font-mono text-lg font-semibold text-[#00d4ff]">{value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>,
+    document.body
+  ) : null;
+
+  return (
+    <>
+      <div className="flex flex-col">
+        {/* Header */}
         <div
-          className="fixed left-0 right-0 z-50 flex items-center justify-center"
-          style={{
-            top: '40px',
-            bottom: '128px',
-            background: 'rgba(0,0,0,0.85)',
-          }}
-          onClick={() => setExpanded(false)}
+          className="px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-[#161b22] transition-colors"
+          style={{ borderBottom: '1px solid #21262d' }}
+          onClick={() => setExpanded(true)}
         >
-          <div
-            className="relative flex flex-col"
-            style={{
-              width: '600px',
-              height: 'calc(100vh - 180px)',
-              background: '#161b22',
-              border: '1px solid #21262d',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal header */}
-            <div
-              className="flex-shrink-0 px-4 py-3 flex items-center justify-between"
-              style={{ borderBottom: '1px solid #21262d' }}
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ background: '#00d4ff' }} />
-                <span className="font-mono text-xs tracking-[0.2em] uppercase text-[#7d8590]">
-                  Neural Inspector — {genome?.genome_id.slice(0, 8)}
-                </span>
-              </div>
-              <button
-                onClick={() => setExpanded(false)}
-                className="font-mono text-xs text-[#7d8590] hover:text-[#e6edf3] transition-colors"
-              >
-                ✕ close
-              </button>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#00d4ff' }} />
+            <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#7d8590]">
+              Neural Inspector
+            </span>
+          </div>
+          <span className="font-mono text-[9px] text-[#7d8590]">⤢ expand</span>
+        </div>
+
+        {!genome ? (
+          <div className="px-3 py-4 font-mono text-[10px] text-[#7d8590]">
+            No creature selected
+          </div>
+        ) : (
+          <>
+            <div className="px-2 py-2">
+              <NetworkGraph genome={genome} activations={activations} />
             </div>
 
-            {/* Scrollable middle content */}
-            <div className="flex-1 overflow-y-auto">
-              {/* Large network graph */}
-              <div className="p-4">
-                {genome && (
-                  <div style={{ border: '1px solid #21262d' }}>
-                    <NetworkGraph
-                      genome={genome}
-                      activations={activations}
-                      viewBox="0 0 500 300"
-                      svgHeight={280}
-                      colX={{ input: 60, hidden: 250, output: 440 }}
-                      layoutH={300}
-                      nodeR={14}
-                      fontSize={11}
-                    />
-                  </div>
-                )}
-              </div>
+            <div style={{ borderTop: '1px solid #21262d' }} />
 
-              {/* Divider */}
-              <div className="mx-4" style={{ borderTop: '1px solid #21262d' }} />
-
-              {/* Body structure */}
-              <div className="px-4 py-3">
-                <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#7d8590] mb-2">
-                  Body Structure
-                </div>
-                <BodyDiagram genome={genome!} viewBox="0 0 500 150" height={130} />
-              </div>
-            </div>
-
-            {/* Stats row — sticky at bottom, never scrolls */}
-            <div
-              className="flex-shrink-0 px-4 py-4 grid grid-cols-4 gap-4"
-              style={{ borderTop: '1px solid #21262d' }}
-            >
+            <div className="px-3 py-2 grid grid-cols-2 gap-x-4 gap-y-1">
               {([
-                ['LIMBS', genome?.node_genes.filter((n) => n.type === NodeType.BODY_SEGMENT).length ?? 0],
-                ['SYNAPSES', genome?.connection_genes.filter((c) => c.conn_type === ConnectionType.SYNAPSE).length ?? 0],
-                ['SPECIES', genome?.species_id ?? 0],
-                ['GENERATION', genome?.generation ?? 0],
-              ] as [string, number][]).map(([label, value]) => (
-                <div key={label} className="flex flex-col gap-1">
-                  <span className="font-mono text-[9px] tracking-wider text-[#7d8590]">{label}</span>
-                  <span className="font-mono text-lg font-semibold text-[#00d4ff]">{value}</span>
+                ['LIMBS', bodySegments.length],
+                ['SYNAPSES', synapses.length],
+                ['SPECIES', genome.species_id],
+                ['GEN', genome.generation],
+              ] as [string, string | number][]).map(([label, value]) => (
+                <div key={label} className="flex justify-between items-center">
+                  <span className="font-mono text-[10px] text-[#7d8590] tracking-wider">{label}</span>
+                  <span className="font-mono text-[11px] text-[#00d4ff] font-medium">{value}</span>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      )}
-    </div>
+          </>
+        )}
+      </div>
+      {modal}
+    </>
   );
 }
