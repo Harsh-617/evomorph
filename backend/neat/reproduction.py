@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import copy
 import random
-from typing import Optional
 
 from backend.neat import config
 from backend.neat.innovation import InnovationTracker
@@ -109,9 +108,9 @@ def _mutate_weights(genome: dict) -> None:
     for conn in genome["connection_genes"]:
         if conn["conn_type"] != "SYNAPSE" or not conn["enabled"]:
             continue
-        if random.random() < 0.9:
+        if random.random() < config.WEIGHT_PERTURB_PROBABILITY:
             conn["weight"] = _clamp(
-                (conn.get("weight") or 0.0) + random.gauss(0.0, 0.5),
+                (conn.get("weight") or 0.0) + random.gauss(0.0, config.WEIGHT_PERTURB_SIGMA),
                 *config.SYNAPSE_WEIGHT_RANGE,
             )
         else:
@@ -329,10 +328,10 @@ def _mutate_segment(genome: dict) -> None:
     if not segs:
         return
     seg = random.choice(segs)
-    seg["width"] = round(_clamp((seg.get("width") or 35.0) + random.gauss(0, 5), *config.SEGMENT_WIDTH_RANGE), 4)
-    seg["height"] = round(_clamp((seg.get("height") or 17.5) + random.gauss(0, 3), *config.SEGMENT_HEIGHT_RANGE), 4)
-    seg["density"] = round(_clamp((seg.get("density") or 1.75) + random.gauss(0, 0.2), *config.SEGMENT_DENSITY_RANGE), 4)
-    seg["friction"] = round(_clamp((seg.get("friction") or 0.55) + random.gauss(0, 0.1), *config.SEGMENT_FRICTION_RANGE), 4)
+    seg["width"] = round(_clamp((seg.get("width") or (config.SEGMENT_WIDTH_RANGE[0] + config.SEGMENT_WIDTH_RANGE[1]) / 2) + random.gauss(0, 5), *config.SEGMENT_WIDTH_RANGE), 4)
+    seg["height"] = round(_clamp((seg.get("height") or (config.SEGMENT_HEIGHT_RANGE[0] + config.SEGMENT_HEIGHT_RANGE[1]) / 2) + random.gauss(0, 3), *config.SEGMENT_HEIGHT_RANGE), 4)
+    seg["density"] = round(_clamp((seg.get("density") or (config.SEGMENT_DENSITY_RANGE[0] + config.SEGMENT_DENSITY_RANGE[1]) / 2) + random.gauss(0, 0.2), *config.SEGMENT_DENSITY_RANGE), 4)
+    seg["friction"] = round(_clamp((seg.get("friction") or (config.SEGMENT_FRICTION_RANGE[0] + config.SEGMENT_FRICTION_RANGE[1]) / 2) + random.gauss(0, 0.1), *config.SEGMENT_FRICTION_RANGE), 4)
 
 
 def _mutate_joint(genome: dict) -> None:
@@ -341,13 +340,13 @@ def _mutate_joint(genome: dict) -> None:
         return
     joint = random.choice(joints)
     joint["max_motor_torque"] = round(
-        _clamp((joint.get("max_motor_torque") or 275.0) + random.gauss(0, 30), *config.JOINT_TORQUE_RANGE), 4
+        _clamp((joint.get("max_motor_torque") or (config.JOINT_TORQUE_RANGE[0] + config.JOINT_TORQUE_RANGE[1]) / 2) + random.gauss(0, 30), *config.JOINT_TORQUE_RANGE), 4
     )
     joint["angle_limit_min"] = round(
-        _clamp((joint.get("angle_limit_min") or -0.785) + random.gauss(0, 0.2), config.JOINT_ANGLE_RANGE[0], 0.0), 4
+        _clamp((joint.get("angle_limit_min") or (config.JOINT_ANGLE_RANGE[0] + 0.0) / 2) + random.gauss(0, 0.2), config.JOINT_ANGLE_RANGE[0], 0.0), 4
     )
     joint["angle_limit_max"] = round(
-        _clamp((joint.get("angle_limit_max") or 0.785) + random.gauss(0, 0.2), 0.0, config.JOINT_ANGLE_RANGE[1]), 4
+        _clamp((joint.get("angle_limit_max") or (0.0 + config.JOINT_ANGLE_RANGE[1]) / 2) + random.gauss(0, 0.2), 0.0, config.JOINT_ANGLE_RANGE[1]), 4
     )
 
 

@@ -617,3 +617,23 @@
 
 ### Test Results
 - 22/22 backend tests passing
+
+## [2026-05-15] - Stage 39: Code Quality — Medium Fixes (M1-M9)
+
+### Fixed (Medium)
+- **`species.py`** — Removed unused `import random`
+- **`reproduction.py`** — Removed unused `from typing import Optional`
+- **`population.py`** — Fixed `environment: object` → `environment: EnvironmentConfig`
+  with proper import from schemas.evolution
+- **`config.py`** — Added `WEIGHT_PERTURB_PROBABILITY = 0.9` and
+  `WEIGHT_PERTURB_SIGMA = 0.5` named constants
+- **`reproduction.py`** — Replaced magic numbers 0.9/0.5 in `_mutate_weights`
+  with config constants. Replaced hardcoded midpoint fallbacks in
+  `_mutate_segment` and `_mutate_joint` with computed range midpoints
+- **`innovation.py`** — Added comment explaining why counter starts at 40
+  (avoids collision with genesis IDs 0-7 for joints, 20-27 for synapses)
+- **`evolution.py`** — Replaced `i + 20` with `i + neat_config.POPULATION_SIZE`
+  so synapse offset stays correct if population size changes
+
+### Test Results
+- 22/22 backend tests passing

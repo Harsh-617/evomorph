@@ -11,6 +11,10 @@ class InnovationTracker:
     """
 
     def __init__(self) -> None:
+        # Starts at 40 to avoid collision with genesis innovation IDs:
+        # joints use IDs 0–7 (one per genome index i),
+        # synapses use IDs 20–27 (i + 20 per genome)
+        # so 40 is the first safe ID for runtime mutations
         self.counter: int = 40
         # (in_node, out_node, conn_type) | ("NODE_SPLIT", in_node, out_node) → id
         self.history: dict = {}

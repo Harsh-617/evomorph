@@ -38,3 +38,6 @@ SEGMENT_FRICTION_RANGE: Tuple[float, float] = (0.1, 1.0)
 JOINT_TORQUE_RANGE: Tuple[float, float] = (50.0, 500.0)
 JOINT_ANGLE_RANGE: Tuple[float, float] = (-1.57, 1.57)
 SYNAPSE_WEIGHT_RANGE: Tuple[float, float] = (-3.0, 3.0)
+
+WEIGHT_PERTURB_PROBABILITY: float = 0.9  # probability of perturbing vs replacing a weight
+WEIGHT_PERTURB_SIGMA: float = 0.5        # gaussian sigma for weight perturbation

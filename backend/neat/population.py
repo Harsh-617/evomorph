@@ -9,6 +9,7 @@ from backend.neat import config
 from backend.neat.innovation import InnovationTracker
 from backend.neat.reproduction import crossover, mutate
 from backend.neat.species import Species, compatibility_distance
+from backend.schemas.evolution import EnvironmentConfig
 
 _ADJUSTED = "_adjusted_fitness"
 
@@ -69,7 +70,7 @@ class Population:
         self,
         genomes: List[dict],
         scores: List[dict],
-        environment: object,
+        environment: EnvironmentConfig,
     ) -> List[dict]:
         """
         Run one generation of NEAT evolution.

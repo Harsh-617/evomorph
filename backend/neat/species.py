@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import math
-import random
 from typing import List
 
 from backend.neat import config

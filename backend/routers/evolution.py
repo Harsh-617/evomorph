@@ -76,7 +76,9 @@ def _make_minimal_genome(i: int = 0) -> Genome:
     )
     src_id = random.choice([1, 2, 3])
     synapse_gene = ConnectionGene(
-        innovation_id=i + 20,
+        # Offset by POPULATION_SIZE so synapse IDs (20-27) don't
+        # collide with joint IDs (0-7). InnovationTracker starts at 40.
+        innovation_id=i + neat_config.POPULATION_SIZE,
         in_node=src_id,
         out_node=5,
         conn_type=ConnectionType.SYNAPSE,
