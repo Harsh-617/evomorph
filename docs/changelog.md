@@ -494,3 +494,23 @@
 - **`page.tsx`** — New Population button. Stops current generation, resets
   timer, fetches fresh genesis, zeros generation/bestFitness/history
 - **`simulationStore.ts`** — Added `setSimulationSpeed` action
+
+## [2026-05-15] - Stage 31: Frontend Engine Tests
+
+### Added
+- **`FitnessCalculator.test.ts`** — 7 tests covering: stationary creature,
+  distance multiplier, monotonicity, efficiency bonus cap, non-negative
+  floor, multi-joint scaling
+- **`NeuralNetwork.test.ts`** — 7 tests covering: connected network output,
+  disabled synapse, weight sign inversion, zero input, allActivations
+  return, empty synapse list, weight magnitude/tanh saturation
+- **`tsconfig.jest.json`** — Jest-specific TS config overriding Next.js
+  module settings (esnext/bundler) to commonjs/node for ts-jest
+  compatibility
+- **`package.json`** — Added jest, @types/jest, ts-jest dev dependencies
+  and test script
+
+### Test Results
+- 14/14 frontend tests passing
+- 22/22 backend tests passing
+- 36/36 total tests passing across the project
