@@ -705,3 +705,18 @@
 - **`NeuralInspector.tsx`** — Removed card wrapper, transparent background,
   1px #21262d borders, IBM Plex Mono labels, compact stats grid
 - **`globals.d.ts`** — Added CSS module declaration to suppress TS warning
+
+## [2026-05-15] - Stage 43: Neural Inspector Redesign + Expand Modal
+
+### Changed
+- **`NeuralInspector.tsx`** — Complete redesign:
+  - Small panel: transparent background, 1px borders, IBM Plex Mono,
+    compact stats grid, BodyDiagram removed (moved to modal only)
+  - Added clickable header with "⤢ expand" badge
+  - Expanded modal: full network graph (500×300, nodeR=14, font 11px),
+    body structure diagram (500×150), 4-column stats row pinned at bottom
+  - Modal constrained to arena space (top:40px, bottom:128px) so it never
+    overlaps top bar or timeline strip
+  - Header and stats row are flex-shrink-0, middle content scrolls
+- **`PhysicsArena.tsx`** — Ground anchor at 70% canvas height
+- **`page.tsx`** — Arena div positioned top:40px bottom:128px
