@@ -3,11 +3,24 @@ import { Genome, CreatureResult } from "../types/genome";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export interface EvolveResponse {
+  generation: number;
   genomes: Genome[];
+  species_info: Array<{
+    species_id: number;
+    color_hue: number;
+    member_count: number;
+    avg_fitness: number;
+    champion_genome_id: string;
+    age: number;
+  }>;
   stats: {
     best_fitness: number;
     avg_fitness: number;
+    fitness_std: number;
     species_count: number;
+    avg_body_complexity: number;
+    avg_neural_complexity: number;
+    most_complex_body: number;
   };
 }
 

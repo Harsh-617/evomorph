@@ -105,6 +105,7 @@ def mutate(genome: dict, innovation_tracker: InnovationTracker) -> dict:
 # ---------------------------------------------------------------------------
 
 def _mutate_weights(genome: dict) -> None:
+    """Perturb or replace synapse weights using Gaussian noise."""
     for conn in genome["connection_genes"]:
         if conn["conn_type"] != "SYNAPSE" or not conn["enabled"]:
             continue
@@ -118,6 +119,7 @@ def _mutate_weights(genome: dict) -> None:
 
 
 def _add_synapse(genome: dict, tracker: InnovationTracker) -> None:
+    """Insert a new enabled synapse between two previously unconnected neurons."""
     neurons = [
         n for n in genome["node_genes"]
         if n["type"] in ("INPUT", "OUTPUT", "HIDDEN")
@@ -151,6 +153,7 @@ def _add_synapse(genome: dict, tracker: InnovationTracker) -> None:
 
 
 def _add_node_split(genome: dict, tracker: InnovationTracker) -> None:
+    """Split an existing synapse by inserting a new hidden neuron."""
     enabled_synapses = [
         c for c in genome["connection_genes"]
         if c["conn_type"] == "SYNAPSE" and c["enabled"]
@@ -184,6 +187,7 @@ def _add_node_split(genome: dict, tracker: InnovationTracker) -> None:
 
 
 def _toggle_enable(genome: dict) -> None:
+    """Flip the enabled flag on a randomly chosen synapse."""
     synapses = [c for c in genome["connection_genes"] if c["conn_type"] == "SYNAPSE"]
     if synapses:
         conn = random.choice(synapses)
@@ -324,6 +328,7 @@ def _remove_limb(genome: dict) -> None:
 
 
 def _mutate_segment(genome: dict) -> None:
+    """Apply Gaussian perturbation to a random body segment's physical properties."""
     segs = [n for n in genome["node_genes"] if n["type"] == "BODY_SEGMENT"]
     if not segs:
         return
@@ -335,6 +340,7 @@ def _mutate_segment(genome: dict) -> None:
 
 
 def _mutate_joint(genome: dict) -> None:
+    """Apply Gaussian perturbation to a random joint's angle limits and motor torque."""
     joints = [c for c in genome["connection_genes"] if c["conn_type"] == "JOINT"]
     if not joints:
         return
@@ -351,6 +357,7 @@ def _mutate_joint(genome: dict) -> None:
 
 
 def _add_sensor(genome: dict) -> None:
+    """Attach a new INPUT sensor node to a random body segment."""
     segs = [n for n in genome["node_genes"] if n["type"] == "BODY_SEGMENT"]
     if not segs:
         return

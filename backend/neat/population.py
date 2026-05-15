@@ -15,6 +15,7 @@ _ADJUSTED = "_adjusted_fitness"
 
 
 def _tournament_select(members: List[dict], k: int = 3) -> dict:
+    """Select the fittest genome from a random sample of size k (tournament selection)."""
     contestants = random.sample(members, min(k, len(members)))
     return max(contestants, key=lambda g: g.get(_ADJUSTED, 0.0))
 

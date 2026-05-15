@@ -10,7 +10,7 @@ export interface GenerationRecord {
   environment: {
     gravity: number;
     friction: number;
-    terrain: string;
+    terrain: 'flat' | 'hurdles' | 'stairs' | 'hills';
   };
 }
 
@@ -25,7 +25,7 @@ interface SimulationState {
   // God Mode sliders
   gravity: number;
   friction: number;
-  terrain: string;
+  terrain: 'flat' | 'hurdles' | 'stairs' | 'hills';
 
   // UI state
   isPlaying: boolean;
@@ -34,7 +34,7 @@ interface SimulationState {
   // Actions
   setPopulation: (genomes: Genome[]) => void;
   updatePhysics: (gravity: number, friction: number) => void;
-  setTerrain: (type: string) => void;
+  setTerrain: (type: 'flat' | 'hurdles' | 'stairs' | 'hills') => void;
   nextGeneration: (newGenomes: Genome[], fitness: number) => void;
   togglePlay: () => void;
   addHistoryRecord: (record: GenerationRecord) => void;

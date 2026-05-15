@@ -60,6 +60,7 @@ def compatibility_distance(genome_a: dict, genome_b: dict) -> float:
 
 
 def _conn_diff(conn_a: dict, conn_b: dict) -> float:
+    """Compute weight difference between two matching connection genes, normalized by max possible range."""
     if conn_a["conn_type"] == "SYNAPSE":
         wa = conn_a.get("weight") or 0.0
         wb = conn_b.get("weight") or 0.0

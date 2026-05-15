@@ -637,3 +637,29 @@
 
 ### Test Results
 - 22/22 backend tests passing
+
+## [2026-05-15] - Stage 40: Code Quality — Medium Fixes (M10-M17)
+
+### Fixed (Medium)
+- **`reproduction.py`** — Added one-line docstrings to all 7 private
+  mutation functions: _mutate_weights, _add_synapse, _add_node_split,
+  _toggle_enable, _mutate_segment, _mutate_joint, _add_sensor
+- **`population.py`** — Added docstring to _tournament_select
+- **`species.py`** — Added docstring to _conn_diff explaining normalization
+- **`api.ts`** — Expanded EvolveResponse interface to include all backend
+  fields: species_info array, fitness_std, avg/most_complex_body,
+  avg_neural_complexity
+- **`SimulationLoop.ts`** — Exported GENERATION_TIME as single source of truth
+- **`FitnessCalculator.ts`** — Removed duplicate GENERATION_TIME, now
+  imports from SimulationLoop
+- **`Leaderboard.tsx`** — Renamed inner component LeaderboardEntry →
+  LeaderboardEntryRow to fix name collision with exported interface
+- **`simulationStore.ts`** — terrain type narrowed from string to
+  'flat' | 'hurdles' | 'stairs' | 'hills' union type
+- **`page.tsx`** — Fixed stale closure in evolution loop by reading all
+  store values via getState() inside interval callback
+
+### Test Results
+- 22/22 backend tests passing
+- 21/21 frontend tests passing
+- 43/43 total passing

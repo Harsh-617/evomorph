@@ -4,7 +4,7 @@ import { createPhysicsCreature, PhysicsCreature, PIXELS_PER_METER } from './Crea
 import { calculateFitness } from './FitnessCalculator';
 import { evaluateNetwork } from './NeuralNetwork';
 
-const GENERATION_TIME = 15;    // seconds
+export const GENERATION_TIME = 15.0;
 const MAX_MOTOR_SPEED = 10;    // rad/s — max speed the motor can drive a joint
 const GROUND_THRESHOLD = 0.5; // metres; torso centre below this → "on ground"
 const CREATURE_SPACING_M = 5; // 5 metres apart × 8 creatures = 40m spread

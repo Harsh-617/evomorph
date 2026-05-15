@@ -10,7 +10,7 @@ interface LeaderboardProps {
   entries: LeaderboardEntry[];
 }
 
-function LeaderboardEntry({ entry, maxFitness }: { entry: LeaderboardEntry; maxFitness: number }) {
+function LeaderboardEntryRow({ entry, maxFitness }: { entry: LeaderboardEntry; maxFitness: number }) {
   // Use golden ratio to spread colors evenly regardless of species ID value
   const GOLDEN_RATIO = 0.618033988749895;
   const hue = Math.round(((entry.species_id * GOLDEN_RATIO) % 1) * 360);
@@ -50,7 +50,7 @@ export default function Leaderboard({ entries }: LeaderboardProps) {
       </h3>
       <div className="flex flex-col gap-1 max-h-64 overflow-y-auto">
         {entries.map((entry) => (
-          <LeaderboardEntry key={entry.genome_id} entry={entry} maxFitness={entries[0]?.fitness ?? 1} />
+          <LeaderboardEntryRow key={entry.genome_id} entry={entry} maxFitness={entries[0]?.fitness ?? 1} />
         ))}
       </div>
     </div>

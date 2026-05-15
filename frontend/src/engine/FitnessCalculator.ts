@@ -1,4 +1,4 @@
-const GENERATION_TIME = 15.0;
+import { GENERATION_TIME } from './SimulationLoop';
 
 export function calculateFitness(stats: {
   maxX: number;

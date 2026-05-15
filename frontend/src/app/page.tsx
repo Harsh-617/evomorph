@@ -22,11 +22,6 @@ export default function Home() {
     simulationSpeed,
     setSimulationSpeed,
     togglePlay,
-    nextGeneration,
-    addHistoryRecord,
-    gravity,
-    friction,
-    terrain,
   } = useSimulationStore();
 
   const handleReset = async () => {
@@ -94,14 +89,15 @@ export default function Home() {
             }));
 
         try {
-          const response = await evolvePopulation(generation, results, { gravity, friction, terrain });
-          nextGeneration(response.genomes, response.stats.best_fitness);
-          addHistoryRecord({
-            generation,
+          const { gravity: g, friction: fr, terrain: t, generation: gen } = useSimulationStore.getState();
+          const response = await evolvePopulation(gen, results, { gravity: g, friction: fr, terrain: t });
+          useSimulationStore.getState().nextGeneration(response.genomes, response.stats.best_fitness);
+          useSimulationStore.getState().addHistoryRecord({
+            generation: gen,
             bestFitness: response.stats.best_fitness,
             avgFitness: response.stats.avg_fitness,
             speciesCount: response.stats.species_count,
-            environment: { gravity, friction, terrain },
+            environment: { gravity: g, friction: fr, terrain: t },
           });
           setTimer(15.0);
         } catch (err) {
