@@ -38,11 +38,11 @@ def _default_env() -> dict:
 
 @pytest.fixture(scope="module")
 def genesis_genomes() -> list[dict]:
-    """20 real genomes from the genesis endpoint — the seed population."""
+    """8 real genomes from the genesis endpoint — the seed population."""
     response = client.get("/api/genesis")
     assert response.status_code == 200
     data = response.json()
-    assert len(data) == 20, f"genesis returned {len(data)} genomes, expected 20"
+    assert len(data) == 8, f"genesis returned {len(data)} genomes, expected 8"
     return data
 
 
@@ -83,10 +83,10 @@ def test_evolve_returns_200(evolve_payload: dict):
 # ---------------------------------------------------------------------------
 
 
-def test_evolve_returns_20_genomes(evolve_response: dict):
+def test_evolve_returns_8_genomes(evolve_response: dict):
     assert "genomes" in evolve_response
-    assert len(evolve_response["genomes"]) == 20, (
-        f"expected 20 genomes, got {len(evolve_response['genomes'])}"
+    assert len(evolve_response["genomes"]) == 8, (
+        f"expected 8 genomes, got {len(evolve_response['genomes'])}"
     )
 
 
@@ -155,7 +155,7 @@ def test_evolve_fitness_influences_selection(genesis_genomes: list[dict]):
     assert response.status_code == 200
 
     body = response.json()
-    assert len(body["genomes"]) == 20
+    assert len(body["genomes"]) == 8
 
     # At genesis all creatures share species_id=0 (champion included).
     # Heavy selection on the champion means its lineage must be present.
@@ -210,4 +210,4 @@ def test_evolve_accepts_varied_fitness_scores(genesis_genomes: list[dict]):
     }
     response = client.post("/api/evolve", json=payload)
     assert response.status_code == 200
-    assert len(response.json()["genomes"]) == 20
+    assert len(response.json()["genomes"]) == 8

@@ -8,6 +8,7 @@ from typing import List
 import numpy as np
 from fastapi import APIRouter
 
+from ..neat import config as neat_config
 from ..neat.population import Population
 from ..schemas.evolution import (
     EvolveRequest,
@@ -27,7 +28,7 @@ from ..schemas.genome import (
 
 router = APIRouter(tags=["evolution"])
 
-_POPULATION_SIZE = 20
+_POPULATION_SIZE = neat_config.POPULATION_SIZE
 
 # ---------------------------------------------------------------------------
 # Module-level state — persists across requests within the same process.

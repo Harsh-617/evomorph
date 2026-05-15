@@ -20,13 +20,13 @@ def genomes() -> list[dict]:
 # ---------------------------------------------------------------------------
 
 
-def test_genesis_returns_20_genomes(genomes):
-    assert len(genomes) == 20
+def test_genesis_returns_8_genomes(genomes):
+    assert len(genomes) == 8
 
 
 def test_genesis_genome_ids_are_unique(genomes):
     ids = [g["genome_id"] for g in genomes]
-    assert len(set(ids)) == 20
+    assert len(set(ids)) == 8
 
 
 # ---------------------------------------------------------------------------

@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Tuple
 
 # Population
-POPULATION_SIZE: int = 20
+POPULATION_SIZE: int = 8
 GENERATION_TIME: float = 15.0
 
 # NEAT speciation

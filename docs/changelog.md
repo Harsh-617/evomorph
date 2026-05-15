@@ -579,3 +579,21 @@
   that were cluttering the right side of the timeline
 - **`SimulationLoop.ts`** — Hurdles now start at x=8m, stairs at x=10m.
   Terrain obstacles now appear where creatures actually travel
+
+  ## [2026-05-15] - Stage 37: Population Size Reduction + Config Fix
+
+### Changed
+- **`config.py`** — POPULATION_SIZE reduced from 20 to 8. Fewer creatures
+  means less visual chaos, more readable simulation, individual body plans
+  clearly visible
+- **`SimulationLoop.ts`** — Creature spacing increased from 3m to 5m.
+  8 creatures × 5m = 40m spread, no overlap or collision at spawn
+- **`routers/evolution.py`** — Removed hardcoded `_POPULATION_SIZE = 20`.
+  Now reads from `neat_config.POPULATION_SIZE` — single source of truth
+- **`test_genesis.py` + `test_evolve.py`** — Updated all assertions from
+  20 to 8 to match new population size
+
+### Test Results
+- 22/22 backend tests passing
+- 21/21 frontend tests passing
+- 43/43 total tests passing
