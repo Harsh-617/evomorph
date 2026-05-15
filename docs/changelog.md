@@ -514,3 +514,13 @@
 - 14/14 frontend tests passing
 - 22/22 backend tests passing
 - 36/36 total tests passing across the project
+
+## [2026-05-15] - Stage 32: Technical Documentation
+
+### Added
+- **`docs/architecture.md`** — Comprehensive technical architecture document
+  covering system overview, frontend/backend architecture, API contract,
+  NEAT algorithm explanation, fitness function, and key engineering decisions
+- **`README.md`** — Updated with demo link placeholder, stack table, local
+  setup instructions, project structure, how it works section, and NEAT
+  reference citation
