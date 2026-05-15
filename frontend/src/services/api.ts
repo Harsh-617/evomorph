@@ -32,7 +32,7 @@ export async function fetchGenesis(): Promise<Genome[]> {
     }
     return res.json() as Promise<Genome[]>;
   } catch (err) {
-    console.error("fetchGenesis error:", err);
+    console.error('[EvoMorph] fetchGenesis failed:', err);
     throw err;
   }
 }
@@ -59,7 +59,7 @@ export async function evolvePopulation(
     }
     return res.json() as Promise<EvolveResponse>;
   } catch (err) {
-    console.error("evolvePopulation error:", err);
+    console.error('[EvoMorph] evolvePopulation failed:', err);
     throw err;
   }
 }

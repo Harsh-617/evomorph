@@ -3,8 +3,6 @@ from __future__ import annotations
 import copy
 import random
 import uuid
-from typing import List
-
 from backend.neat import config
 from backend.neat.innovation import InnovationTracker
 from backend.neat.reproduction import crossover, mutate
@@ -14,7 +12,7 @@ from backend.schemas.evolution import EnvironmentConfig
 _ADJUSTED = "_adjusted_fitness"
 
 
-def _tournament_select(members: List[dict], k: int = 3) -> dict:
+def _tournament_select(members: list[dict], k: int = 3) -> dict:
     """Select the fittest genome from a random sample of size k (tournament selection)."""
     contestants = random.sample(members, min(k, len(members)))
     return max(contestants, key=lambda g: g.get(_ADJUSTED, 0.0))
@@ -22,7 +20,7 @@ def _tournament_select(members: List[dict], k: int = 3) -> dict:
 
 class Population:
     def __init__(self) -> None:
-        self.species: List[Species] = []
+        self.species: list[Species] = []
         self.innovation_tracker: InnovationTracker = InnovationTracker()
         self.generation: int = 0
         self._next_species_id: int = 0  # starts at 0 so genesis species_id=0 is preserved
@@ -32,7 +30,7 @@ class Population:
     # Speciation
     # ------------------------------------------------------------------
 
-    def speciate(self, genomes: List[dict]) -> None:
+    def speciate(self, genomes: list[dict]) -> None:
         """Assign each genome to a species; create new species when no match found."""
         for sp in self.species:
             sp.members = []
@@ -69,10 +67,10 @@ class Population:
 
     def evolve(
         self,
-        genomes: List[dict],
-        scores: List[dict],
+        genomes: list[dict],
+        scores: list[dict],
         environment: EnvironmentConfig,
-    ) -> List[dict]:
+    ) -> list[dict]:
         """
         Run one generation of NEAT evolution.
 

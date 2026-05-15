@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import math
-from typing import List
-
 from backend.neat import config
 
 
@@ -89,7 +87,7 @@ class Species:
     def __init__(self, species_id: int, representative: dict) -> None:
         self.species_id: int = species_id
         self.representative: dict = representative
-        self.members: List[dict] = []
+        self.members: list[dict] = []
         self.age: int = 0
         # Evenly-spaced hues using the golden angle for perceptual separation
         self.color_hue: float = (species_id * 137.508) % 360.0

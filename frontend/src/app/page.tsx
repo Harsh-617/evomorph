@@ -101,7 +101,7 @@ export default function Home() {
           });
           setTimer(15.0);
         } catch (err) {
-          console.error("Evolution failed:", err);
+          console.error('[EvoMorph] Evolution failed:', err);
           generationRunning.current = false;
         }
       }

@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import random
 import uuid
-from typing import List
-
 import numpy as np
 from fastapi import APIRouter
 
@@ -33,7 +31,7 @@ _POPULATION_SIZE = neat_config.POPULATION_SIZE
 # Module-level state — persists across requests within the same process.
 # ---------------------------------------------------------------------------
 _population: Population = Population()
-_current_genomes: List[dict] = []
+_current_genomes: list[dict] = []
 
 
 # ---------------------------------------------------------------------------
@@ -114,8 +112,8 @@ def _genome_to_dict(g: Genome) -> dict:
 # Endpoints
 # ---------------------------------------------------------------------------
 
-@router.get("/genesis", response_model=List[Genome])
-def genesis() -> List[Genome]:
+@router.get("/genesis", response_model=list[Genome])
+def genesis() -> list[Genome]:
     """Initialize a fresh population of POPULATION_SIZE minimal genomes (Generation 0)."""
     global _population, _current_genomes
 

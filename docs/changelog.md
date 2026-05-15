@@ -663,3 +663,26 @@
 - 22/22 backend tests passing
 - 21/21 frontend tests passing
 - 43/43 total passing
+
+## [2026-05-15] - Stage 41: Code Quality — Low Fixes (L1-L8)
+
+### Fixed (Low)
+- **`config.py`** — Removed inline changelog comment from SURVIVAL_RATE.
+  Git history is the right place for this
+- **`reproduction.py`** — Added docstring to _add_limb describing what
+  it creates (segment, joint, motor neuron, sensor, initial synapse)
+- **`Leaderboard.tsx`** — Moved GOLDEN_RATIO and SPECIES_COLOR_SATURATION
+  to module-level constants. No longer recalculated on every render
+- **`PhysicsArena.tsx`** — Added comment explaining 100m threshold for
+  ground edge filter. Added warning above planck internal field interfaces
+- **`api.ts` + `page.tsx`** — Prefixed all console.error calls with
+  [EvoMorph] for clear identification in production browser consoles
+- **Backend files** — Replaced all `List[X]` with native `list[X]`
+  (Python 3.9+ syntax) across population.py, species.py, reproduction.py,
+  evolution.py, schemas/genome.py, schemas/evolution.py. Removed now-unused
+  `from typing import List` imports
+
+### Test Results
+- 22/22 backend tests passing
+- 21/21 frontend tests passing
+- 43/43 total passing

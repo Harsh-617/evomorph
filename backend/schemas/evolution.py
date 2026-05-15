@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-
 from pydantic import BaseModel
 
 from backend.schemas.genome import Genome
@@ -29,7 +27,7 @@ class EnvironmentConfig(BaseModel):
 
 class EvolveRequest(BaseModel):
     generation: int
-    scores: List[CreatureResult]
+    scores: list[CreatureResult]
     environment: EnvironmentConfig
 
 
@@ -54,6 +52,6 @@ class GenerationStats(BaseModel):
 
 class EvolveResponse(BaseModel):
     generation: int
-    genomes: List[Genome]
-    species_info: List[SpeciesInfo]
+    genomes: list[Genome]
+    species_info: list[SpeciesInfo]
     stats: GenerationStats

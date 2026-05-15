@@ -1,3 +1,6 @@
+const GOLDEN_RATIO = 0.618033988749895;
+const SPECIES_COLOR_SATURATION = 70;
+
 interface LeaderboardEntry {
   genome_id: string;
   rank: number;
@@ -11,12 +14,9 @@ interface LeaderboardProps {
 }
 
 function LeaderboardEntryRow({ entry, maxFitness }: { entry: LeaderboardEntry; maxFitness: number }) {
-  // Use golden ratio to spread colors evenly regardless of species ID value
-  const GOLDEN_RATIO = 0.618033988749895;
   const hue = Math.round(((entry.species_id * GOLDEN_RATIO) % 1) * 360);
-  const saturation = 70;
   const lightness = entry.isLeader ? 70 : 55; // leader slightly brighter
-  const color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  const color = `hsl(${hue}, ${SPECIES_COLOR_SATURATION}%, ${lightness}%)`;
   const barWidth = maxFitness > 0 ? (entry.fitness / maxFitness) * 100 : 0;
 
   return (

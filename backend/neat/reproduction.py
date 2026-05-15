@@ -199,6 +199,7 @@ def _toggle_enable(genome: dict) -> None:
 # ---------------------------------------------------------------------------
 
 def _add_limb(genome: dict, tracker: InnovationTracker) -> None:
+    """Create a new body segment attached to a random existing segment via a joint, auto-wiring an OUTPUT motor neuron, INPUT joint-angle sensor, and an initial synapse."""
     body_segments = [n for n in genome["node_genes"] if n["type"] == "BODY_SEGMENT"]
     if not body_segments:
         return

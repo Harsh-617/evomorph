@@ -13,7 +13,7 @@ C2: float = 1.0   # Disjoint gene coefficient
 C3: float = 0.4   # Weight difference coefficient
 
 # Selection
-SURVIVAL_RATE: float = 0.60  # was 0.80 — cull more aggressively to create selection pressure
+SURVIVAL_RATE: float = 0.60
 CROSSOVER_RATE: float = 0.75
 ELITISM_THRESHOLD: int = 5
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -68,8 +68,8 @@ class ConnectionGene(BaseModel):
 
 
 class NeuralNetwork(BaseModel):
-    weights: List[List[float]] = Field(default_factory=list)
-    biases: List[float] = Field(default_factory=list)
+    weights: list[list[float]] = Field(default_factory=list)
+    biases: list[float] = Field(default_factory=list)
 
 
 class Genome(BaseModel):
@@ -77,6 +77,6 @@ class Genome(BaseModel):
     species_id: int
     generation: int = Field(..., ge=0)
     fitness: float = Field(default=0.0, ge=0.0)
-    node_genes: List[NodeGene] = Field(default_factory=list)
-    connection_genes: List[ConnectionGene] = Field(default_factory=list)
+    node_genes: list[NodeGene] = Field(default_factory=list)
+    connection_genes: list[ConnectionGene] = Field(default_factory=list)
     brain: NeuralNetwork = Field(default_factory=NeuralNetwork)

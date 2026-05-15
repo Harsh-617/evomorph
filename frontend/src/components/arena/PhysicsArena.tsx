@@ -8,7 +8,8 @@ import { useSimulationStore } from '@/store/simulationStore';
 import { Genome } from '@/types/genome';
 import { LeaderboardEntry } from '@/components/leaderboard/Leaderboard';
 
-// planck's PolygonShape stores local vertices here, but the type is internal
+// These interfaces expose planck.js internal fields not in the public API.
+// If planck is updated, verify m_vertices, m_vertex1, m_vertex2 still exist.
 interface PlanckPolygon extends planck.Shape {
   m_vertices: planck.Vec2[];
 }
@@ -160,7 +161,8 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate, onLea
           const shape = fixture.getShape();
           if (shape.getType() !== 'edge') continue;
           const edge = shape as PlanckEdge;
-          if (Math.abs(edge.m_vertex1.x) > 100) continue; // skip main ground
+          // 100m threshold — main ground edge spans ±1000m, all terrain edges are local (<65m)
+          if (Math.abs(edge.m_vertex1.x) > 100) continue;
           ctx.moveTo(edge.m_vertex1.x * PIXELS_PER_METER, -edge.m_vertex1.y * PIXELS_PER_METER);
           ctx.lineTo(edge.m_vertex2.x * PIXELS_PER_METER, -edge.m_vertex2.y * PIXELS_PER_METER);
         }
