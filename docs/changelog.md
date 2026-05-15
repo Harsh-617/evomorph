@@ -686,3 +686,22 @@
 - 22/22 backend tests passing
 - 21/21 frontend tests passing
 - 43/43 total passing
+
+## [2026-05-15] - Stage 42: UI Redesign — Foundation
+
+### Changed
+- **`layout.tsx`** — Replaced Geist fonts with IBM Plex Mono + IBM Plex Sans.
+  Updated metadata title to "EvoMorph"
+- **`globals.css`** — Complete replacement with scientific instrument design
+  system: dark base tokens (#0d1117), cyan accent (#00d4ff), green (#00ff88),
+  scanline overlay class, custom scrollbar, IBM Plex font stack variables
+- **`page.tsx`** — Complete layout redesign: full-screen arena as hero,
+  minimal HUD top bar (h-10), left panel for neural inspector (w-56),
+  right panel for god mode + leaderboard (w-52), bottom timeline strip (h-32).
+  Loading screen redesigned with terminal aesthetic
+- **`PhysicsArena.tsx`** — Ground anchor moved to 70% canvas height.
+  Arena div positioned between top bar and timeline strip (top:40px, bottom:128px).
+  Ground line updated to #00ff88 at 1.5px width
+- **`NeuralInspector.tsx`** — Removed card wrapper, transparent background,
+  1px #21262d borders, IBM Plex Mono labels, compact stats grid
+- **`globals.d.ts`** — Added CSS module declaration to suppress TS warning

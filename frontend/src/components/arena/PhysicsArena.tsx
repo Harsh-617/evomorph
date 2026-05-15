@@ -110,14 +110,14 @@ export default function PhysicsArena({ onEngineReady, onActivationsUpdate, onLea
       const cameraX = leaderX * PIXELS_PER_METER - W * 0.25;
 
       ctx.save();
-      ctx.translate(-cameraX, H * 0.75);
+      ctx.translate(-cameraX, H * 0.70);
 
       // Ground must always fill the screen as camera moves.
       ctx.beginPath();
       ctx.moveTo(cameraX - 200, 0);
       ctx.lineTo(cameraX + W + 200, 0);
-      ctx.strokeStyle = '#22c55e';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#00ff88';
+      ctx.lineWidth = 1.5;
       ctx.stroke();
 
       // Terrain obstacles

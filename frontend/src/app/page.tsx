@@ -115,82 +115,123 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <span className="text-cyan-400 font-mono animate-pulse">
-          Initializing EvoMorph Engine...
-        </span>
+      <div className="w-screen h-screen flex flex-col items-center justify-center bg-[#0d1117]">
+        <div className="border border-[#00d4ff] px-8 py-6 flex flex-col items-center gap-4">
+          <div className="text-[#00d4ff] font-mono text-xs tracking-[0.3em] uppercase">
+            EvoMorph
+          </div>
+          <div className="text-[#7d8590] font-mono text-xs animate-pulse">
+            Initializing evolution engine...
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      <header className="h-16 flex-shrink-0 flex items-center justify-between px-6 bg-slate-800 border-b border-slate-700">
+    <div className="relative w-screen h-screen overflow-hidden" style={{ background: '#0d1117' }}>
+
+      {/* PHYSICS ARENA */}
+      <div className="absolute left-0 right-0 arena-scanlines"
+        style={{ top: '40px', bottom: '128px' }}>
+        <PhysicsArena
+          onEngineReady={(engine) => { engineRef.current = engine; }}
+          onActivationsUpdate={(genome, activations) => setInspectorData({ genome, activations })}
+          onLeaderboardUpdate={setLeaderboardData}
+        />
+      </div>
+
+      {/* TOP BAR — minimal HUD strip */}
+      <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4 h-10"
+        style={{ background: 'rgba(13,17,23,0.85)', borderBottom: '1px solid #21262d' }}>
+
+        {/* Left: Logo + metrics */}
         <div className="flex items-center gap-6">
-          <span className="text-xl font-bold text-white">EvoMorph</span>
-          <span className="text-slate-400 text-sm">Gen: {generation}</span>
-          <span className="text-slate-400 text-sm">Best: {bestFitness.toFixed(1)}</span>
-          <span className="text-amber-400 text-sm">Record: {allTimeRecord.toFixed(1)}</span>
+          <span className="font-mono text-xs font-semibold tracking-[0.2em] text-[#00d4ff] uppercase">
+            EvoMorph
+          </span>
+          <div className="flex items-center gap-4 font-mono text-xs">
+            <span className="text-[#7d8590]">GEN <span className="text-[#e6edf3]">{generation.toString().padStart(3, '0')}</span></span>
+            <span className="text-[#7d8590]">BEST <span className="text-[#00d4ff]">{bestFitness.toFixed(1)}</span></span>
+            <span className="text-[#7d8590]">RECORD <span className="text-[#f59e0b]">{allTimeRecord.toFixed(1)}</span></span>
+          </div>
         </div>
-        <div className="flex items-center gap-4">
+
+        {/* Center: Timer */}
+        <div className="font-mono text-sm font-semibold"
+          style={{ color: timer < 3 ? '#ff4444' : '#e6edf3' }}>
+          {timer.toFixed(1)}s
+        </div>
+
+        {/* Right: Controls */}
+        <div className="flex items-center gap-3">
+          {/* Speed buttons */}
           <div className="flex items-center gap-1">
             {([1, 2, 5] as const).map((speed) => (
               <button
                 key={speed}
                 onClick={() => setSimulationSpeed(speed)}
-                className={`px-2 py-1 rounded text-xs font-mono transition-colors ${
-                  simulationSpeed === speed
-                    ? 'bg-cyan-500 text-slate-900'
-                    : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
-                }`}
+                className="font-mono text-xs px-2 py-0.5 transition-colors"
+                style={{
+                  border: '1px solid',
+                  borderColor: simulationSpeed === speed ? '#00d4ff' : '#21262d',
+                  color: simulationSpeed === speed ? '#00d4ff' : '#7d8590',
+                  background: simulationSpeed === speed ? 'rgba(0,212,255,0.08)' : 'transparent',
+                }}
               >
-                {speed}x
+                {speed}×
               </button>
             ))}
           </div>
-          <span className="text-cyan-400 font-mono text-sm">
-            {timer.toFixed(1)}s
-          </span>
+
+          {/* New Population */}
           <button
             onClick={handleReset}
-            className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-xs font-medium transition-colors"
+            className="font-mono text-xs px-3 py-0.5 transition-colors text-[#7d8590] hover:text-[#e6edf3]"
+            style={{ border: '1px solid #21262d' }}
           >
-            New Population
+            RESET
           </button>
+
+          {/* Play/Pause */}
           <button
             onClick={togglePlay}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition-colors"
+            className="font-mono text-xs px-4 py-0.5 font-semibold transition-colors"
+            style={{
+              border: '1px solid #00d4ff',
+              color: isPlaying ? '#0d1117' : '#00d4ff',
+              background: isPlaying ? '#00d4ff' : 'transparent',
+            }}
           >
-            {isPlaying ? "Pause" : "Play"}
+            {isPlaying ? 'PAUSE' : 'PLAY'}
           </button>
         </div>
-      </header>
+      </div>
 
-      <main className="flex-1 flex flex-row overflow-hidden">
-        <div className="flex-1 overflow-hidden">
-          <PhysicsArena
-            onEngineReady={(engine) => {
-              engineRef.current = engine;
-            }}
-            onActivationsUpdate={(genome, activations) =>
-              setInspectorData({ genome, activations })
-            }
-            onLeaderboardUpdate={setLeaderboardData}
-          />
-        </div>
-        <aside className="w-80 flex-shrink-0 min-h-0 overflow-y-auto flex flex-col gap-4 p-4 bg-slate-900 border-l border-slate-700">
-          <NeuralInspector
-            genome={inspectorData?.genome ?? null}
-            activations={inspectorData?.activations ?? new Map()}
-          />
-          <GodModePanel />
+      {/* LEFT PANEL — Neural Inspector, pinned to left edge */}
+      <div className="absolute left-0 top-10 bottom-32 z-10 w-56 overflow-y-auto"
+        style={{ background: 'rgba(13,17,23,0.9)', borderRight: '1px solid #21262d' }}>
+        <NeuralInspector
+          genome={inspectorData?.genome ?? null}
+          activations={inspectorData?.activations ?? new Map()}
+        />
+      </div>
+
+      {/* RIGHT PANEL — God Mode + Leaderboard */}
+      <div className="absolute right-0 top-10 bottom-32 z-10 w-52 overflow-y-auto flex flex-col"
+        style={{ background: 'rgba(13,17,23,0.9)', borderLeft: '1px solid #21262d' }}>
+        <GodModePanel />
+        <div style={{ borderTop: '1px solid #21262d' }}>
           <Leaderboard entries={leaderboardData} />
-        </aside>
-      </main>
+        </div>
+      </div>
 
-      <div className="h-40 flex-shrink-0">
+      {/* BOTTOM STRIP — Phylogeny Timeline */}
+      <div className="absolute bottom-0 left-0 right-0 z-10 h-32"
+        style={{ background: 'rgba(13,17,23,0.9)', borderTop: '1px solid #21262d' }}>
         <PhylogenyTimeline />
       </div>
+
     </div>
   );
 }

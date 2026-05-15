@@ -218,41 +218,53 @@ function BodyDiagram({ genome }: { genome: Genome }) {
   );
 }
 
-// ── CreatureStats ─────────────────────────────────────────────────────────────
-
-function CreatureStats({ genome }: { genome: Genome }) {
-  const bodySegments = genome.node_genes.filter((n) => n.type === NodeType.BODY_SEGMENT);
-  const synapses = genome.connection_genes.filter((c) => c.conn_type === ConnectionType.SYNAPSE);
-
-  return (
-    <div className="grid grid-cols-2 gap-2 text-xs">
-      <div className="text-slate-400">Limbs</div>
-      <div className="text-cyan-400">{bodySegments.length}</div>
-      <div className="text-slate-400">Synapses</div>
-      <div className="text-cyan-400">{synapses.length}</div>
-      <div className="text-slate-400">Species ID</div>
-      <div className="text-cyan-400">{genome.species_id}</div>
-      <div className="text-slate-400">Generation</div>
-      <div className="text-cyan-400">{genome.generation}</div>
-    </div>
-  );
-}
-
 // ── NeuralInspector ───────────────────────────────────────────────────────────
 
 export default function NeuralInspector({ genome, activations }: NeuralInspectorProps) {
+  const bodySegments = genome?.node_genes.filter((n) => n.type === NodeType.BODY_SEGMENT) ?? [];
+  const synapses = genome?.connection_genes.filter((c) => c.conn_type === ConnectionType.SYNAPSE) ?? [];
+
   return (
-    <div className="flex flex-col gap-4 p-4 bg-slate-800 rounded-xl border border-slate-700">
-      <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-        Neural Inspector
-      </h3>
+    <div className="flex flex-col">
+      {/* Header */}
+      <div className="px-3 py-2 flex items-center gap-2" style={{ borderBottom: '1px solid #21262d' }}>
+        <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#00d4ff' }} />
+        <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#7d8590]">
+          Neural Inspector
+        </span>
+      </div>
+
       {!genome ? (
-        <p className="text-xs text-slate-500 text-center py-4">No creature selected</p>
+        <div className="px-3 py-4 font-mono text-[10px] text-[#7d8590]">
+          No creature selected
+        </div>
       ) : (
         <>
-          <NetworkGraph genome={genome} activations={activations} />
-          <BodyDiagram genome={genome} />
-          <CreatureStats genome={genome} />
+          <div className="px-2 py-2">
+            <NetworkGraph genome={genome} activations={activations} />
+          </div>
+
+          <div style={{ borderTop: '1px solid #21262d' }} />
+
+          <div className="px-2 py-2">
+            <BodyDiagram genome={genome} />
+          </div>
+
+          <div style={{ borderTop: '1px solid #21262d' }} />
+
+          <div className="px-3 py-2 grid grid-cols-2 gap-x-4 gap-y-1">
+            {([
+              ['LIMBS', bodySegments.length],
+              ['SYNAPSES', synapses.length],
+              ['SPECIES', genome.species_id],
+              ['GEN', genome.generation],
+            ] as [string, string | number][]).map(([label, value]) => (
+              <div key={label} className="flex justify-between items-center">
+                <span className="font-mono text-[9px] text-[#7d8590] tracking-wider">{label}</span>
+                <span className="font-mono text-[10px] text-[#00d4ff] font-medium">{value}</span>
+              </div>
+            ))}
+          </div>
         </>
       )}
     </div>
